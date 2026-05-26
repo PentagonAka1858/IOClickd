@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->timestamp('fecha_creacion')->useCurrent();
 
-            $table->foreignId('usuario_id')
-                ->constrained('usuarios')
+            $table->foreignId('user_id')
+                ->constrained('users')
                 ->cascadeOnDelete();
         });
     }

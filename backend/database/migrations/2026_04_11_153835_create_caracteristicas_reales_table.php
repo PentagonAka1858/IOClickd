@@ -19,8 +19,8 @@ return new class extends Migration
 
             $table->timestamp('fecha')->useCurrent();
 
-            $table->foreignId('usuario_id')
-                ->constrained('usuarios')
+            $table->foreignId('user_id')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->foreignId('producto_id')

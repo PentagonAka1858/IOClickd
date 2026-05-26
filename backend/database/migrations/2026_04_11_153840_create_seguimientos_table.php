@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('seguimientos', function (Blueprint $table) {
             $table->foreignId('seguidor_id')
-                ->constrained('usuarios')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->foreignId('seguido_id')
-                ->constrained('usuarios')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->timestamp('fecha')->useCurrent();

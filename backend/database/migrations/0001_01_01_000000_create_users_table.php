@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('email')->unique();
-            $table->string('contrasena_hash', 255);
+            $table->string('password', 255);
             $table->enum('rol', ['USER', 'ADMIN', 'MOD'])->default('USER');
             $table->string('idioma_preferido', 15)->default('es');
             $table->boolean('visibilidad')->default(true);
             $table->rememberToken();
-            $table->timestamp('fecha_registro')->useCurrent();
+            $table->timestamps();
+            $table->timestamp('email_verified_at')->nullable();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('resenias', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('usuario_id')
-                ->constrained('usuarios')
+            $table->foreignId('user_id')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->foreignId('producto_id')
@@ -30,7 +30,7 @@ return new class extends Migration
 
             $table->timestamp('fecha')->useCurrent();
 
-            $table->unique(['usuario_id', 'producto_id']);
+            $table->unique(['user_id', 'producto_id']);
         });
     }
 

@@ -7,11 +7,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +20,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nombre',
         'email',
         'password',
+        'rol',
+        'idioma_preferido',
+        'visibilidad',
     ];
 
     /**
@@ -43,7 +47,24 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
+            'visibilidad'       => 'boolean',
         ];
+    }
+
+    // Helpers de rol
+    public function esAdmin(): bool
+    {
+        return $this->rol === 'ADMIN';
+    }
+
+    public function esMod(): bool
+    {
+        return $this->rol === 'MOD';
+    }
+
+    public function esAdminOMod(): bool
+    {
+        return in_array($this->rol, ['ADMIN', 'MOD']);
     }
 }

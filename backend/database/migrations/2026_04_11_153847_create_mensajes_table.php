@@ -19,7 +19,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->foreignId('emisor_id')
-                ->constrained('usuarios')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->text('contenido');

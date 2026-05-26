@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('soporte_id')
-                ->constrained('usuarios')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->foreignId('cliente_id')
-                ->constrained('usuarios')
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->tinyInteger('estado')->default(0);
