@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('modelo')->nullable();
             $table->string('marca')->index();
-            $table->tinyInteger('tipo')->index();
+            $table->enum('tipo', ['RATON', 'TECLADO', 'AURICULAR', 'MONITOR', 'ALFOMBRILLA', 'OTRO'])->index();
             $table->text('descripcion')->nullable();
             $table->timestamp('fecha_salida')->nullable();
+            $table->timestamps();
         });
     }
 
