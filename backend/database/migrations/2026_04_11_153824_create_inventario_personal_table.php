@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('producto_id')->constrained('productos')->cascadeOnDelete();
 
             $table->integer('cantidad')->default(1);
-            $table->timestamp('fecha')->useCurrent();
+            $table->timestamps();
 
             $table->primary(['user_id', 'producto_id']);
         });

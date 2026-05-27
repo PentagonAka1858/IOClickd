@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('producto_id')->constrained('productos')->cascadeOnDelete();
             $table->foreignId('lista_id')->constrained('listas_personales')->cascadeOnDelete();
 
-            $table->timestamp('fecha')->useCurrent();
+            $table->timestamps();
 
             $table->primary(['producto_id', 'lista_id']);
         });

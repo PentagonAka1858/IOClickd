@@ -4,30 +4,38 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ListaPersonal extends Model
 {
     protected $table = 'listas_personales';
-    public $timestamps = false;
 
     protected $fillable = [
+        'user_id',
         'nombre_lista',
         'descripcion',
-        'user_id',
+        'publica',
     ];
 
-    protected $casts = [
-        'fecha_creacion' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'publica' => 'boolean',
+        ];
+    }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function productosEnListas(): HasMany
+    public function productos(): BelongsToMany
     {
-        return $this->hasMany(ProductoEnLista::class, 'lista_id');
+        return $this->belongsToMany(
+            Producto::class,
+            'productos_en_listas',
+            'lista_id',
+            'producto_id'
+        )->withTimestamps();
     }
 }

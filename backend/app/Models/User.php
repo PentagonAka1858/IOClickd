@@ -78,4 +78,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Resenia::class);
     }
+    
+    public function listas(): HasMany
+    {
+        return $this->hasMany(ListaPersonal::class);
+    }
 }

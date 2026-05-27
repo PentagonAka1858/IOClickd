@@ -15,10 +15,6 @@ class ProductoEnLista extends Model
         'lista_id',
     ];
 
-    protected $casts = [
-        'fecha' => 'datetime',
-    ];
-
     public function producto(): BelongsTo
     {
         return $this->belongsTo(Producto::class, 'producto_id');

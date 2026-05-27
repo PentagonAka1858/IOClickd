@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nombre_lista');
             $table->text('descripcion')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
+            $table->boolean('publica')->default(false);
+            $table->timestamps();
 
             $table->foreignId('user_id')
                 ->constrained('users')
