@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Resenia extends Model
 {
     protected $table = 'resenias';
-    public $timestamps = false;
 
     protected $fillable = [
         'user_id',
@@ -17,11 +16,15 @@ class Resenia extends Model
         'comentario',
         'voto_up',
         'voto_down',
+        'visible',
     ];
 
-    protected $casts = [
-        'fecha' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'visible' => 'boolean',
+        ];
+    }
 
     public function user(): BelongsTo
     {

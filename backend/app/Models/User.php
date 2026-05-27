@@ -73,4 +73,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorito::class);
     }
+
+    public function resenias(): HasMany
+    {
+        return $this->hasMany(Resenia::class);
+    }
 }

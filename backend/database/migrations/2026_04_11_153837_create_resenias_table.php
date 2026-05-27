@@ -27,8 +27,10 @@ return new class extends Migration
 
             $table->integer('voto_up')->default(0);
             $table->integer('voto_down')->default(0);
+            
+            $table->boolean('visible')->default(true);
 
-            $table->timestamp('fecha')->useCurrent();
+            $table->timestamps();
 
             $table->unique(['user_id', 'producto_id']);
         });
