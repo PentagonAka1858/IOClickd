@@ -32,7 +32,7 @@ class Producto extends Model
         return $this->hasMany(Favorito::class, 'producto_id');
     }
 
-    public function inventarioPersonal(): HasMany
+    public function inventarios(): HasMany
     {
         return $this->hasMany(InventarioPersonal::class, 'producto_id');
     }

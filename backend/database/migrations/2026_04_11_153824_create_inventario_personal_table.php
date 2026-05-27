@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('inventario_personal', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('producto_id')->constrained('productos')->cascadeOnDelete();
-
+            $table->boolean('principal')->default(false);
             $table->integer('cantidad')->default(1);
             $table->timestamps();
 

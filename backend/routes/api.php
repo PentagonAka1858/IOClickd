@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FavoritoController;
+use App\Http\Controllers\Api\InventarioController;
 use App\Http\Controllers\Api\ListaPersonalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductoController;
@@ -16,6 +17,7 @@ Route::get('/productos',       [ProductoController::class, 'index']);
 Route::get('/productos/{producto}', [ProductoController::class, 'show']);
 Route::get('/productos/{productoId}/resenias', [ReseniaController::class, 'index']);
 Route::get('/listas/{lista}', [ListaPersonalController::class, 'show']);
+Route::get('/productos/{productoId}/usuarios', [InventarioController::class, 'usuariosConProducto']);
 
 // Rutas autenticadas
 Route::middleware('auth:sanctum')->group(function () {
@@ -40,6 +42,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/listas/{lista}',                                [ListaPersonalController::class, 'destroy']);
     Route::post('/listas/{lista}/productos',                        [ListaPersonalController::class, 'agregarProducto']);
     Route::delete('/listas/{lista}/productos/{producto_id}',        [ListaPersonalController::class, 'quitarProducto']);
+
+    // Inventario
+    Route::get('/inventario',                   [InventarioController::class, 'index']);
+    Route::post('/inventario',                  [InventarioController::class, 'store']);
+    Route::put('/inventario/{producto_id}',     [InventarioController::class, 'update']);
+    Route::delete('/inventario/{producto_id}',  [InventarioController::class, 'destroy']);
     
     // Rutas de moderación (ADMIN o MOD)
     Route::middleware('rol:ADMIN,MOD')->group(function () {
