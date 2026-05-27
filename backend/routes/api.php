@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FavoritoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductoController;
 
@@ -16,6 +17,11 @@ Route::get('/productos/{producto}', [ProductoController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Favoritos
+    Route::get('/favoritos',            [FavoritoController::class, 'index']);
+    Route::post('/favoritos',           [FavoritoController::class, 'store']);
+    Route::delete('/favoritos/{producto_id}', [FavoritoController::class, 'destroy']);
 
     // Rutas de moderación (ADMIN o MOD)
     Route::middleware('rol:ADMIN,MOD')->group(function () {

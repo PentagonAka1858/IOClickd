@@ -2,30 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
 class Favorito extends Model
 {
-    protected $table = 'favoritos';
     public $timestamps = false;
+    public $incrementing = false;
+    protected $primaryKey = null;
 
     protected $fillable = [
         'user_id',
         'producto_id',
     ];
 
-    protected $casts = [
-        'fecha' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return [
+            'created_at' => 'datetime',
+        ];
     }
 
     public function producto(): BelongsTo
     {
-        return $this->belongsTo(Producto::class, 'producto_id');
+        return $this->belongsTo(Producto::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

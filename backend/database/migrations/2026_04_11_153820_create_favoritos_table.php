@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('favoritos', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('producto_id')->constrained('productos')->cascadeOnDelete();
-            $table->timestamp('fecha')->useCurrent();
+            $table->timestamp('created_at')->useCurrent();
 
             $table->primary(['user_id', 'producto_id']);
         });
