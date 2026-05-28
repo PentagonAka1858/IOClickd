@@ -16,6 +16,7 @@ return new class extends Migration
 
             $table->foreignId('soporte_id')
                 ->constrained('users')
+                ->nullable()
                 ->cascadeOnDelete();
 
             $table->foreignId('cliente_id')
@@ -23,7 +24,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->tinyInteger('estado')->default(0);
-            $table->timestamp('fecha_creacion')->useCurrent();
+            $table->timestamps();
             $table->timestamp('fecha_cierre')->nullable();
         });
     }

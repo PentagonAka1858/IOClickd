@@ -19,7 +19,6 @@ class Consulta extends Model
     ];
 
     protected $casts = [
-        'fecha_creacion' => 'datetime',
         'fecha_cierre' => 'datetime',
     ];
 
