@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FavoritoController;
 use App\Http\Controllers\Api\InventarioController;
 use App\Http\Controllers\Api\ListaPersonalController;
+use App\Http\Controllers\Api\ConsultaController;
+use App\Http\Controllers\Api\SeguimientoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\ReseniaController;
@@ -48,6 +50,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/inventario',                  [InventarioController::class, 'store']);
     Route::put('/inventario/{producto_id}',     [InventarioController::class, 'update']);
     Route::delete('/inventario/{producto_id}',  [InventarioController::class, 'destroy']);
+
+    // Consultas y soporte
+    Route::get('/consultas',                        [ConsultaController::class, 'index']);
+    Route::post('/consultas',                       [ConsultaController::class, 'store']);
+    Route::get('/consultas/{consulta}',             [ConsultaController::class, 'show']);
+    Route::post('/consultas/{consulta}/mensajes',   [ConsultaController::class, 'addMensaje']);
+    Route::post('/consultas/{consulta}/cerrar',     [ConsultaController::class, 'cerrar']);
+    Route::post('/consultas/{consulta}/asignar',    [ConsultaController::class, 'asignar']);
+
+    // Seguimientos (follow/unfollow)
+    Route::get('/users/{user}/followers',           [SeguimientoController::class, 'followers']);
+    Route::get('/users/{user}/following',           [SeguimientoController::class, 'following']);
+    Route::get('/me/following',                     [SeguimientoController::class, 'myFollowing']);
+    Route::post('/users/{user}/follow',             [SeguimientoController::class, 'follow']);
+    Route::delete('/users/{user}/follow',           [SeguimientoController::class, 'unfollow']);
     
     // Rutas de moderación (ADMIN o MOD)
     Route::middleware('rol:ADMIN,MOD')->group(function () {

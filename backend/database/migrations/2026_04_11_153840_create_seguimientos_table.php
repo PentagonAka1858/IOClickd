@@ -20,7 +20,7 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->timestamp('fecha')->useCurrent();
+            $table->timestamps();
 
             $table->primary(['seguidor_id', 'seguido_id']);
         });

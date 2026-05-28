@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -87,5 +88,22 @@ class User extends Authenticatable
     public function inventario(): HasMany
     {
         return $this->hasMany(InventarioPersonal::class);
+    }
+
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'seguimientos', 'seguidor_id', 'seguido_id')
+            ->withPivot('fecha');
+    }
+
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'seguimientos', 'seguido_id', 'seguidor_id')
+            ->withPivot('fecha');
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('users.id', $user->id)->exists();
     }
 }

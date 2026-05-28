@@ -9,14 +9,11 @@ class Seguimiento extends Model
 {
     protected $table = 'seguimientos';
     public $timestamps = false;
+    public $incrementing = false;
 
     protected $fillable = [
         'seguidor_id',
         'seguido_id',
-    ];
-
-    protected $casts = [
-        'fecha' => 'datetime',
     ];
 
     public function seguidor(): BelongsTo
