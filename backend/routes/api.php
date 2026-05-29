@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\SeguimientoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\ReseniaController;
+use App\Http\Controllers\Api\CaracteristicasRealesController;
+use App\Http\Controllers\Api\CaracteristicasDetalladasController;
+use App\Http\Controllers\Api\MensajeController;
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -17,7 +20,9 @@ Route::post('/login',    [AuthController::class, 'login']);
 // Rutas públicas
 Route::get('/productos',       [ProductoController::class, 'index']);
 Route::get('/productos/{producto}', [ProductoController::class, 'show']);
+Route::get('/productos/{producto}/caracteristicas-detalladas', [CaracteristicasDetalladasController::class, 'show']);
 Route::get('/productos/{productoId}/resenias', [ReseniaController::class, 'index']);
+Route::get('/productos/{productoId}/caracteristicas-reales', [CaracteristicasRealesController::class, 'index']);
 Route::get('/listas/{lista}', [ListaPersonalController::class, 'show']);
 Route::get('/productos/{productoId}/usuarios', [InventarioController::class, 'usuariosConProducto']);
 
@@ -58,6 +63,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/consultas/{consulta}/mensajes',   [ConsultaController::class, 'addMensaje']);
     Route::post('/consultas/{consulta}/cerrar',     [ConsultaController::class, 'cerrar']);
     Route::post('/consultas/{consulta}/asignar',    [ConsultaController::class, 'asignar']);
+
+    // Mensajes
+    Route::get('/consultas/{consulta}/mensajes',                        [MensajeController::class, 'index']);
+    Route::get('/consultas/{consulta}/mensajes/{mensaje}',              [MensajeController::class, 'show']);
+    Route::delete('/consultas/{consulta}/mensajes/{mensaje}',           [MensajeController::class, 'destroy']);
+
+    // Características reales
+    Route::post('/caracteristicas-reales',               [CaracteristicasRealesController::class, 'store']);
+    Route::delete('/caracteristicas-reales/{caracteristicaReal}', [CaracteristicasRealesController::class, 'destroy']);
+
+    // Características detalladas (solo para admins)
+    Route::post('/productos/{producto}/caracteristicas-detalladas',    [CaracteristicasDetalladasController::class, 'store']);
+    Route::delete('/productos/{producto}/caracteristicas-detalladas',  [CaracteristicasDetalladasController::class, 'destroy']);
 
     // Seguimientos (follow/unfollow)
     Route::get('/users/{user}/followers',           [SeguimientoController::class, 'followers']);
