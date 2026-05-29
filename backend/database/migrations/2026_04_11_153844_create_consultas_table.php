@@ -15,15 +15,15 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('soporte_id')
-                ->constrained('users')
                 ->nullable()
+                ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->foreignId('cliente_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->tinyInteger('estado')->default(0);
+            $table->enum('estado', ['ABIERTA', 'EN_PROCESO', 'CERRADA'])->default('ABIERTA');
             $table->timestamps();
             $table->timestamp('fecha_cierre')->nullable();
         });

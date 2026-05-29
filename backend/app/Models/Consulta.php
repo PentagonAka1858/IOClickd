@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Consulta extends Model
 {
     protected $table = 'consultas';
-    public $timestamps = false;
 
     protected $fillable = [
         'soporte_id',
