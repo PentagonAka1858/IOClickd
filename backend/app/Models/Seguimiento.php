@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Seguimiento extends Model
 {
     protected $table = 'seguimientos';
-    public $timestamps = false;
     public $incrementing = false;
 
     protected $fillable = [

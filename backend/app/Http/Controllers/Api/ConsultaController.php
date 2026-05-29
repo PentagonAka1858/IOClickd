@@ -18,7 +18,7 @@ class ConsultaController extends Controller
         $user = $request->user();
 
         // Si es admin o moderador, mostrar consultas asignadas a él + pendientes de asignar
-        if (in_array($user->rol, ['admin', 'moderador'])) {
+        if (in_array($user->rol, ['ADMIN', 'MOD'])) {
             $consultas = Consulta::where(function ($query) use ($user) {
                 // Consultas asignadas a este soporte
                 $query->where('soporte_id', $user->id)
@@ -48,7 +48,7 @@ class ConsultaController extends Controller
     public function store(Request $request)
     {
         // Verificar que el usuario no sea admin o moderador
-        if (in_array($request->user()->rol, ['admin', 'moderador'])) {
+        if (in_array($request->user()->rol, ['ADMIN', 'MOD'])) {
             return response()->json([
                 'message' => 'Los administradores y moderadores no pueden crear consultas'
             ], 403);
@@ -62,7 +62,7 @@ class ConsultaController extends Controller
         $consulta = Consulta::create([
             'cliente_id' => $request->user()->id,
             'soporte_id' => null, // Sin asignar aún
-            'estado' => 0, // Abierta
+            'estado' => 'ABIERTA',
         ]);
 
         // Crear el primer mensaje (la consulta inicial)
@@ -86,7 +86,7 @@ class ConsultaController extends Controller
         if (
             $request->user()->id !== $consulta->cliente_id &&
             $request->user()->id !== $consulta->soporte_id &&
-            !in_array($request->user()->rol, ['admin', 'moderador'])
+            !in_array($request->user()->rol, ['ADMIN', 'MOD'])
         ) {
             return response()->json([
                 'message' => 'No tienes permiso para ver esta consulta'
@@ -110,7 +110,7 @@ class ConsultaController extends Controller
         if (
             $user->id !== $consulta->cliente_id &&
             $user->id !== $consulta->soporte_id &&
-            !in_array($user->rol, ['admin', 'moderador'])
+            !in_array($user->rol, ['ADMIN', 'MOD'])
         ) {
             return response()->json([
                 'message' => 'No tienes permiso para escribir en esta consulta'
@@ -118,7 +118,7 @@ class ConsultaController extends Controller
         }
 
         // No se pueden agregar mensajes a una consulta cerrada
-        if ($consulta->estado === 1) {
+        if ($consulta->estado === 'CERRADA') {
             return response()->json([
                 'message' => 'No puedes escribir en una consulta cerrada'
             ], 403);
@@ -126,7 +126,7 @@ class ConsultaController extends Controller
 
         // Si es un admin/moderador sin asignar la consulta aún, asignarla
         if (
-            in_array($user->rol, ['admin', 'moderador']) &&
+            in_array($user->rol, ['ADMIN', 'MOD']) &&
             $consulta->soporte_id === null
         ) {
             $consulta->update(['soporte_id' => $user->id]);
@@ -166,14 +166,14 @@ class ConsultaController extends Controller
         }
 
         // Si ya está cerrada, no hacer nada
-        if ($consulta->estado === 1) {
+        if ($consulta->estado === 'CERRADA') {
             return response()->json([
                 'message' => 'Esta consulta ya está cerrada'
             ], 400);
         }
 
         $consulta->update([
-            'estado' => 1,
+            'estado' => 'CERRADA',
             'fecha_cierre' => now(),
         ]);
 
@@ -192,7 +192,7 @@ class ConsultaController extends Controller
         $user = $request->user();
 
         // Verificar que sea admin
-        if ($user->rol !== 'admin') {
+        if ($user->rol !== 'ADMIN') {
             return response()->json([
                 'message' => 'Solo los administradores pueden asignar consultas'
             ], 403);

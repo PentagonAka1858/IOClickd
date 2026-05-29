@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProductoEnLista extends Model
 {
     protected $table = 'productos_en_listas';
-    public $timestamps = false;
 
     protected $fillable = [
         'producto_id',
