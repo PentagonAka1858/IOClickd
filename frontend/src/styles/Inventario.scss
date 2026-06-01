@@ -1,0 +1,146 @@
+.inventario-page {
+  padding: 2rem;
+}
+
+.inventario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.inventario-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.inventario-header p {
+  margin: 0.5rem 0 0;
+  color: #6b7280;
+}
+
+.inventario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.inventario-card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inventario-card.principal {
+  border-color: #4f46e5;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.08);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.product-label .brand {
+  display: inline-block;
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.product-label h2 {
+  margin: 0.5rem 0 0;
+  font-size: 1.15rem;
+}
+
+.badge-principal {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.product-type {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.product-description {
+  margin: 0.75rem 0 1rem;
+  color: #4b5563;
+  min-height: 3rem;
+}
+
+.card-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-details span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.card-details p,
+.card-details input {
+  margin: 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.card-details input {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.75rem;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.empty-state,
+.loading-container {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.alert {
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background: #ecfdf5;
+  color: #166534;
+  border: 1px solid #d1fae5;
+}
+
+.alert-danger {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}

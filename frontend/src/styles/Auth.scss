@@ -1,0 +1,101 @@
+@use './variables' as *;
+@use 'sass:color';
+
+.auth-container {
+  min-height: calc(100vh - 140px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background-color: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  padding: 2.5rem;
+  animation: fadeIn 0.4s ease;
+
+  h1 {
+    margin-bottom: 0.75rem;
+    font-size: 2rem;
+    color: $text-color;
+  }
+
+  .auth-subtitle {
+    margin-bottom: 2rem;
+    color: $secondary-color;
+  }
+
+  .alert {
+    padding: 1rem;
+    border-radius: $border-radius;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+
+    &.alert-danger {
+      background-color: color.adjust($danger-color, $lightness: 42%);
+      border: 1px solid color.adjust($danger-color, $lightness: 30%);
+      color: color.adjust($danger-color, $lightness: -10%);
+    }
+  }
+
+  .auth-form {
+    display: grid;
+    gap: 1rem;
+
+    .form-group {
+      display: grid;
+      gap: 0.5rem;
+
+      label {
+        font-weight: 600;
+        color: $text-color;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        padding: 0.95rem 1rem;
+        font-size: 1rem;
+        color: $text-color;
+        outline: none;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          border-color: $primary-color;
+          box-shadow: 0 0 0 4px rgba($primary-color, 0.12);
+        }
+      }
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+  }
+
+  .auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+
+    p {
+      color: $secondary-color;
+      font-size: 0.95rem;
+
+      a {
+        color: $primary-color;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 1.8rem;
+  }
+}

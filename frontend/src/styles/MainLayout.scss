@@ -1,0 +1,38 @@
+@use './variables' as *;
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.footer {
+  background-color: $bg-light;
+  border-top: 1px solid $border-color;
+  padding: 2rem;
+  text-align: center;
+  color: $secondary-color;
+  margin-top: auto;
+
+  p {
+    margin: 0;
+  }
+}
+
+.loading-container {
+  @include flex-center;
+  min-height: 300px;
+  
+  p {
+    font-size: 1.2rem;
+    color: $secondary-color;
+  }
+}
