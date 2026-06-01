@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FavoritoController;
 use App\Http\Controllers\Api\InventarioController;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Api\ListaPersonalController;
 use App\Http\Controllers\Api\ConsultaController;
 use App\Http\Controllers\Api\SeguimientoController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Api\ReseniaController;
 use App\Http\Controllers\Api\CaracteristicasRealesController;
 use App\Http\Controllers\Api\CaracteristicasDetalladasController;
 use App\Http\Controllers\Api\MensajeController;
+use App\Http\Controllers\Api\AdminController;
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,6 +32,7 @@ Route::get('/productos/{productoId}/usuarios', [InventarioController::class, 'us
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
 
     // Favoritos
     Route::get('/favoritos',            [FavoritoController::class, 'index']);
@@ -89,11 +92,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/productos',            [ProductoController::class, 'store']);
         Route::put('/productos/{producto}',  [ProductoController::class, 'update']);
         Route::patch('/resenias/{resenia}/moderar',  [ReseniaController::class, 'moderar']);
+
+        Route::get('/admin/estadisticas', [AdminController::class, 'stats']);
+        Route::get('/admin/usuarios', [AdminController::class, 'usuarios']);
+        Route::get('/admin/productos', [AdminController::class, 'productos']);
+        Route::get('/admin/resenias', [AdminController::class, 'resenias']);
     });
 
     // Rutas de administración (solo ADMIN)
     Route::middleware('rol:ADMIN')->group(function () {
         Route::delete('/productos/{producto}', [ProductoController::class, 'destroy']);
+        Route::delete('/admin/usuarios/{user}', [AdminController::class, 'destroyUser']);
+        Route::patch('/admin/usuarios/{user}/visibilidad', [AdminController::class, 'toggleUserVisibility']);
     });
 
 });
