@@ -139,7 +139,7 @@
 
 ### 2.5 Despliegue con Docker
 
-- No existe configuración de Docker en el repositorio actual.
+- No se ha podido llegar a realizar esto, por lo que este punto no consta.
 - Por tanto, no se incluye un procedimiento de despliegue Docker en este README.
 
 ## 3. Documentación técnica
@@ -222,7 +222,7 @@ Tablas principales y relaciones:
 
 ### 4.1 Aviso
 
-- No se ha encontrado una documentación Swagger/OpenAPI generada automáticamente en el repositorio actual.
+- No se ha podido llegar a realizar esto, por lo que este punto no consta.
 - La documentación de la API se presenta aquí de forma manual.
 
 ### 4.2 Base URL
