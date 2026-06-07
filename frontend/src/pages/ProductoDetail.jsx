@@ -268,8 +268,18 @@ export const ProductoDetail = () => {
       {/* Bloque principal del producto */}
       <section className="detail-header">
         <div className="detail-grid">
-          <div className={`detail-image-block ${producto.tipo.toLowerCase()}`}>
-            {getProductIcon(producto.tipo)}
+          <div className="detail-image-wrapper">
+            {producto.foto ? (
+              <img 
+                src={`http://localhost:8000/storage/${producto.foto}`} 
+                alt={`${producto.marca} ${producto.modelo}`} 
+                className="detail-image"
+              />
+            ) : (
+              <div className={`detail-image-block ${producto.tipo.toLowerCase()}`}>
+                {getProductIcon(producto.tipo)}
+              </div>
+            )}
           </div>
           
           <div className="detail-info-block">
@@ -441,9 +451,11 @@ export const ProductoDetail = () => {
               <article key={resenia.id} className="review-item">
                 <div className="review-header">
                   <div className="user-info">
-                    <div className="avatar">
-                      {resenia.user?.nombre ? resenia.user.nombre.charAt(0).toUpperCase() : '?'}
-                    </div>
+                    <img 
+                      src={resenia.user?.foto ? `http://localhost:8000/storage/${resenia.user.foto}` : '/user.placeholder.png'} 
+                      alt={resenia.user?.nombre || 'User'} 
+                      className="review-user-avatar"
+                    />
                     <div>
                       <span className="username">{resenia.user?.nombre || 'Usuario Anónimo'}</span>
                       <span className="date"> • {formatFecha(resenia.created_at)}</span>

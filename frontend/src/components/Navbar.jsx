@@ -70,7 +70,14 @@ export const Navbar = () => {
           <div className="navbar-auth">
             {isAuthenticated ? (
               <div className="user-section">
-                <span className="user-name">{user?.nombre}</span>
+                <Link to="/perfil" className="user-profile-link">
+                  <img 
+                    src={user?.foto ? `http://localhost:8000/storage/${user.foto}` : '/user.placeholder.png'} 
+                    alt={user?.nombre} 
+                    className="user-avatar"
+                  />
+                  <span className="user-name">{user?.nombre}</span>
+                </Link>
                 <button onClick={handleLogout} className="logout-btn">
                   Cerrar Sesión
                 </button>

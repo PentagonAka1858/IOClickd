@@ -81,6 +81,27 @@
       align-items: center;
       gap: 1rem;
 
+      .user-profile-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: $text-color;
+        transition: $transition;
+
+        &:hover {
+          color: $primary-color;
+        }
+
+        .user-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid $primary-color;
+        }
+      }
+
       .user-name {
         color: $text-color;
         font-weight: 500;

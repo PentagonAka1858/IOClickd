@@ -1,0 +1,247 @@
+@use './variables' as *;
+@use 'sass:color';
+
+.perfil-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+
+  .page-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $text-color;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $secondary-color;
+      font-size: 1.1rem;
+    }
+  }
+
+  .perfil-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .perfil-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .avatar-card {
+    background-color: $bg-white;
+    border-radius: $border-radius;
+    box-shadow: $shadow-md;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba($border-color, 0.5);
+
+    .avatar-preview-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      border: 4px solid color.adjust($primary-color, $lightness: 20%);
+      box-shadow: $shadow-sm;
+      transition: $transition;
+
+      &:hover {
+        transform: scale(1.03);
+        border-color: $primary-color;
+
+        .avatar-overlay {
+          opacity: 1;
+        }
+      }
+
+      .profile-avatar-large {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        @include flex-center;
+        opacity: 0;
+        transition: $transition;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      margin: 0 0 0.5rem 0;
+      color: $text-color;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      &.admin {
+        background-color: rgba($danger-color, 0.1);
+        color: $danger-color;
+      }
+
+      &.mod {
+        background-color: rgba($warning-color, 0.1);
+        color: color.adjust($warning-color, $lightness: -20%);
+      }
+
+      &.user {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+      }
+    }
+  }
+
+  .info-card {
+    background-color: $bg-white;
+    border-radius: $border-radius;
+    box-shadow: $shadow-md;
+    padding: 1.5rem;
+    border: 1px solid rgba($border-color, 0.5);
+
+    h4 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      color: $text-color;
+      border-bottom: 1px solid rgba($border-color, 0.5);
+      padding-bottom: 0.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-label {
+        font-size: 0.8rem;
+        color: $secondary-color;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      .info-value {
+        font-size: 0.95rem;
+        color: $text-color;
+        word-break: break-all;
+      }
+    }
+  }
+
+  .perfil-form-card {
+    background-color: $bg-white;
+    border-radius: $border-radius;
+    box-shadow: $shadow-md;
+    padding: 2.5rem;
+    border: 1px solid rgba($border-color, 0.5);
+
+    h2 {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.6rem;
+      color: $text-color;
+    }
+
+    .perfil-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: $text-color;
+      }
+
+      input[type="text"],
+      select {
+        padding: 0.75rem 1rem;
+        border-radius: $border-radius;
+        border: 1px solid $border-color;
+        font-size: 1rem;
+        outline: none;
+        transition: $transition;
+        background-color: $bg-light;
+
+        &:focus {
+          border-color: $primary-color;
+          background-color: white;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1rem;
+
+      .btn {
+        min-width: 150px;
+      }
+    }
+  }
+
+  // Alerts
+  .alert {
+    padding: 1rem;
+    border-radius: $border-radius;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    border: 1px solid transparent;
+
+    &.alert-success {
+      background-color: rgba($success-color, 0.1);
+      border-color: rgba($success-color, 0.2);
+      color: color.adjust($success-color, $lightness: -10%);
+    }
+
+    &.alert-danger {
+      background-color: rgba($danger-color, 0.1);
+      border-color: rgba($danger-color, 0.2);
+      color: $danger-color;
+    }
+  }
+}

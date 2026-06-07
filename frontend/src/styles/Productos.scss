@@ -138,20 +138,41 @@ $cat-otro-bg: rgba(107, 114, 128, 0.15);
       border-color: rgba($primary-color, 0.2);
     }
 
-    .card-image-placeholder {
+    .card-image-wrapper {
       height: 160px;
-      background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+      position: relative;
+      overflow: hidden;
+      background: $bg-light;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
-      position: relative;
 
-      &.raton { background: linear-gradient(135deg, #f5f3ff, #ddd6fe); }
-      &.teclado { background: linear-gradient(135deg, #eff6ff, #bfdbfe); }
-      &.auricular { background: linear-gradient(135deg, #ecfeff, #a5f3fc); }
-      &.monitor { background: linear-gradient(135deg, #fff7ed, #ffedd5); }
-      &.alfombrilla { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+      .card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: $transition;
+      }
+
+      &:hover .card-image {
+        transform: scale(1.05);
+      }
+
+      .card-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+
+        &.raton { background: linear-gradient(135deg, #f5f3ff, #ddd6fe); }
+        &.teclado { background: linear-gradient(135deg, #eff6ff, #bfdbfe); }
+        &.auricular { background: linear-gradient(135deg, #ecfeff, #a5f3fc); }
+        &.monitor { background: linear-gradient(135deg, #fff7ed, #ffedd5); }
+        &.alfombrilla { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+      }
 
       .card-type-badge {
         position: absolute;
@@ -162,6 +183,7 @@ $cat-otro-bg: rgba(107, 114, 128, 0.15);
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
+        z-index: 2;
 
         &.raton { color: $cat-raton-color; background: $cat-raton-bg; }
         &.teclado { color: $cat-teclado-color; background: $cat-teclado-bg; }
@@ -339,23 +361,40 @@ $cat-otro-bg: rgba(107, 114, 128, 0.15);
       }
     }
 
-    .detail-image-block {
+    .detail-image-wrapper {
       height: 300px;
+      overflow: hidden;
+      background: $bg-light;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 6rem;
-      position: relative;
 
       @media(min-width: 768px) {
         height: 100%;
+        min-height: 300px;
       }
 
-      &.raton { background: linear-gradient(135deg, #f5f3ff, #ddd6fe); }
-      &.teclado { background: linear-gradient(135deg, #eff6ff, #bfdbfe); }
-      &.auricular { background: linear-gradient(135deg, #ecfeff, #a5f3fc); }
-      &.monitor { background: linear-gradient(135deg, #fff7ed, #ffedd5); }
-      &.alfombrilla { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+      .detail-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .detail-image-block {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 6rem;
+        position: relative;
+
+        &.raton { background: linear-gradient(135deg, #f5f3ff, #ddd6fe); }
+        &.teclado { background: linear-gradient(135deg, #eff6ff, #bfdbfe); }
+        &.auricular { background: linear-gradient(135deg, #ecfeff, #a5f3fc); }
+        &.monitor { background: linear-gradient(135deg, #fff7ed, #ffedd5); }
+        &.alfombrilla { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+      }
     }
 
     .detail-info-block {
@@ -603,6 +642,14 @@ $cat-otro-bg: rgba(107, 114, 128, 0.15);
           display: flex;
           align-items: center;
           gap: 0.75rem;
+
+          .review-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid $primary-color;
+          }
 
           .avatar {
             width: 36px;

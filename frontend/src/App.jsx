@@ -5,6 +5,8 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { EmailVerification } from './pages/EmailVerification';
+import { ResendVerificationEmail } from './pages/ResendVerificationEmail';
 import { Productos } from './pages/Productos';
 import { ProductoDetail } from './pages/ProductoDetail';
 import { Consultas } from './pages/Consultas';
@@ -13,6 +15,7 @@ import { Inventario } from './pages/Inventario';
 import { MisListas } from './pages/MisListas';
 import { ListaDetalle } from './pages/ListaDetalle';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { Perfil } from './pages/Perfil';
 import { NotFound } from './pages/NotFound';
 import './App.scss';
 
@@ -25,6 +28,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<EmailVerification />} />
+            <Route path="/resend-verification" element={<ResendVerificationEmail />} />
             <Route path="/productos" element={<Productos />} />
             <Route path="/productos/:id" element={<ProductoDetail />} />
 
@@ -35,6 +40,7 @@ function App() {
             <Route path="/consultas" element={<ProtectedRoute><Consultas /></ProtectedRoute>} />
             <Route path="/consultas/:id" element={<ProtectedRoute><ConsultaDetail /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

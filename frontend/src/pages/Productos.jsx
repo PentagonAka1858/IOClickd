@@ -237,8 +237,18 @@ export const Productos = () => {
         <div className="productos-grid">
           {productos.map((producto) => (
             <article key={producto.id} className="producto-card">
-              <div className={`card-image-placeholder ${producto.tipo.toLowerCase()}`}>
-                {getProductIcon(producto.tipo)}
+              <div className="card-image-wrapper">
+                {producto.foto ? (
+                  <img 
+                    src={`http://localhost:8000/storage/${producto.foto}`} 
+                    alt={`${producto.marca} ${producto.modelo}`} 
+                    className="card-image"
+                  />
+                ) : (
+                  <div className={`card-image-placeholder ${producto.tipo.toLowerCase()}`}>
+                    {getProductIcon(producto.tipo)}
+                  </div>
+                )}
                 <span className={`card-type-badge ${producto.tipo.toLowerCase()}`}>
                   {producto.tipo}
                 </span>

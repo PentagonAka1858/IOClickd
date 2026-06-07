@@ -10,6 +10,8 @@ export const Register = () => {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -28,7 +30,13 @@ export const Register = () => {
       const result = await register(nombre, email, password, passwordConfirmation);
 
       if (result.success) {
-        navigate('/');
+        setRegisterSuccess(true);
+        setRegisteredEmail(email);
+        // Clear form
+        setNombre('');
+        setEmail('');
+        setPassword('');
+        setPasswordConfirmation('');
       } else {
         setError(result.message || 'Error al registrarse');
       }
@@ -38,6 +46,35 @@ export const Register = () => {
       setLoading(false);
     }
   };
+
+  // Success message state
+  if (registerSuccess) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="register-success">
+            <div className="success-icon">✓</div>
+            <h2>¡Cuenta creada exitosamente!</h2>
+            <p>Hemos enviado un email de verificación a:</p>
+            <p className="success-email">{registeredEmail}</p>
+            <p className="verification-instructions">
+              Por favor, haz clic en el enlace de verificación en tu email para completar el registro.
+              El enlace expirará en 24 horas.
+            </p>
+            <div className="verification-info">
+              <p className="small">¿No recibiste el email?</p>
+              <Link to="/resend-verification" className="btn btn-secondary btn-block">
+                Reenviar Email de Verificación
+              </Link>
+            </div>
+            <Link to="/login" className="btn btn-outline btn-block">
+              Ir a Iniciar Sesión
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-container">
