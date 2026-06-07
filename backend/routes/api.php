@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\FavoritoController;
 use App\Http\Controllers\Api\InventarioController;
 use Illuminate\Http\Request;
@@ -18,6 +19,10 @@ use App\Http\Controllers\Api\AdminController;
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
+
+// Email verification routes
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('api.verify-email')->middleware('signed');
+Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->name('api.resend-verification-email');
 
 // Rutas públicas
 Route::get('/productos',       [ProductoController::class, 'index']);

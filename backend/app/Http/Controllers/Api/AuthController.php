@@ -29,10 +29,14 @@ class AuthController extends Controller
             'idioma_preferido' => $request->idioma_preferido ?? 'es',
         ]);
 
+        // Send email verification notification
+        $user->sendEmailVerificationNotification();
+
         Auth::login($user);
 
         return response()->json([
-            'user'  => $user,
+            'user'    => $user,
+            'message' => 'Registration successful. Please verify your email to unlock full access.',
         ], 201);
     }
 
