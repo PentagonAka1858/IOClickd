@@ -1,0 +1,5 @@
+# Carpeta placeholder para SSL
+# En caso de usar certificados SSL, se podrán meter aquí para su uso en producción:
+# - server.crt
+# - server.key
+# - dhparam.pem (optional, for better security)

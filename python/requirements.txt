@@ -1,0 +1,19 @@
+# Para instalar las dependencias necesarias para el proyecto, puedes usar el siguiente comando:
+# pip install -r requirements.txt
+# o
+# python -m pip install -r requirements.txt
+# o
+# py -m pip install -r requirements.txt
+requests
+beautifulsoup4
+lxml
+playwright
+
+# Para usar Playwright con webscrapper.py:
+# 1) Instala dependencias:
+#    pip install -r requirements.txt
+# 2) Descarga los navegadores necesarios:
+#    playwright install
+# 3) Ejecuta el scraper:
+#    python webscrapper.py
+# Esto permite que webscrapper.py use el navegador headless de Playwright.

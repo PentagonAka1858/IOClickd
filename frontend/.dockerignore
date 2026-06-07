@@ -1,0 +1,16 @@
+# Frontend .dockerignore
+node_modules/
+dist/
+.env
+.env.*.local
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+.DS_Store
+.idea/
+.vscode/
+*.log
+coverage/
+.eslintcache

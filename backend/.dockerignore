@@ -1,0 +1,22 @@
+# Backend .dockerignore
+vendor/
+node_modules/
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+bootstrap/cache/
+.env
+.env.*.php
+.env.lock
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+.DS_Store
+.idea/
+.vscode/
+*.log
+tests/
+.github/

@@ -1,0 +1,19 @@
+# Git ignore for Docker files
+.env
+.env.docker
+!.env.example
+!.env.docker.example
+
+# SSL certificates
+ssl/
+!ssl/.gitkeep
+
+# Docker logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+python/*.csv
+python/*.json
