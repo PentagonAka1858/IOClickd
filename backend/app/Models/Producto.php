@@ -18,6 +18,7 @@ class Producto extends Model
         'tipo',
         'descripcion',
         'fecha_salida',
+        'foto',
     ];
 
     protected function casts(): array

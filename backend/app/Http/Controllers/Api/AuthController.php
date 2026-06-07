@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -70,5 +71,31 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        $request->validate([
+            'nombre'           => 'required|string|max:255',
+            'idioma_preferido' => 'sometimes|string|max:15',
+            'foto'             => 'nullable|image|max:2048', // 2MB max
+        ]);
+
+        $data = $request->only(['nombre', 'idioma_preferido']);
+
+        if ($request->hasFile('foto')) {
+            // Eliminar foto antigua si existe
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+            // Guardar nueva foto
+            $path = $request->file('foto')->store('photos/users', 'public');
+            $data['foto'] = $path;
+        }
+
+        $user->update($data);
+
+        return response()->json($user);
     }
 }

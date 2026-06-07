@@ -28,6 +28,7 @@ class User extends Authenticatable
         'rol',
         'idioma_preferido',
         'visibilidad',
+        'foto',
     ];
 
     /**

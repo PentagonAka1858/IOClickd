@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/user/profile', [AuthController::class, 'updateProfile']);
 
     // Favoritos
     Route::get('/favoritos',            [FavoritoController::class, 'index']);
@@ -91,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('rol:ADMIN,MOD')->group(function () {
         Route::post('/productos',            [ProductoController::class, 'store']);
         Route::put('/productos/{producto}',  [ProductoController::class, 'update']);
+        Route::post('/productos/{producto}', [ProductoController::class, 'update']); // for handling multipart/form-data updates with files
         Route::patch('/resenias/{resenia}/moderar',  [ReseniaController::class, 'moderar']);
 
         Route::get('/admin/estadisticas', [AdminController::class, 'stats']);
