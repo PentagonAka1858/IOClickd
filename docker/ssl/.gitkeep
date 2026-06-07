@@ -1,0 +1,5 @@
+# SSL placeholder directory
+# Place your SSL certificates here for production use:
+# - server.crt
+# - server.key
+# - dhparam.pem (optional, for better security)
