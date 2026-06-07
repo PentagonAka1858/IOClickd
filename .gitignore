@@ -14,3 +14,6 @@ ssl/
 # OS files
 .DS_Store
 Thumbs.db
+
+python/*.csv
+python/*.json
