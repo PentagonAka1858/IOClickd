@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\FavoritoController;
 use App\Http\Controllers\Api\InventarioController;
 use Illuminate\Http\Request;
@@ -19,6 +20,10 @@ use App\Http\Controllers\Api\AdminController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
+// Email verification routes
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('api.verify-email')->middleware('signed');
+Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->name('api.resend-verification-email');
+
 // Rutas públicas
 Route::get('/productos',       [ProductoController::class, 'index']);
 Route::get('/productos/{producto}', [ProductoController::class, 'show']);
@@ -33,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/user/profile', [AuthController::class, 'updateProfile']);
 
     // Favoritos
     Route::get('/favoritos',            [FavoritoController::class, 'index']);
@@ -91,6 +97,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('rol:ADMIN,MOD')->group(function () {
         Route::post('/productos',            [ProductoController::class, 'store']);
         Route::put('/productos/{producto}',  [ProductoController::class, 'update']);
+        Route::post('/productos/{producto}', [ProductoController::class, 'update']); // for handling multipart/form-data updates with files
         Route::patch('/resenias/{resenia}/moderar',  [ReseniaController::class, 'moderar']);
 
         Route::get('/admin/estadisticas', [AdminController::class, 'stats']);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
@@ -48,11 +49,19 @@ class ProductoController extends Controller
             'tipo'        => 'required|in:RATON,TECLADO,AURICULAR,MONITOR,ALFOMBRILLA,OTRO',
             'descripcion' => 'nullable|string',
             'fecha_salida'=> 'nullable|date',
+            'foto'        => 'nullable|image|max:2048',
         ]);
 
-        $producto = Producto::create($request->only([
+        $data = $request->only([
             'modelo', 'marca', 'tipo', 'descripcion', 'fecha_salida'
-        ]));
+        ]);
+
+        if ($request->hasFile('foto')) {
+            $path = $request->file('foto')->store('photos/products', 'public');
+            $data['foto'] = $path;
+        }
+
+        $producto = Producto::create($data);
 
         return response()->json($producto, 201);
     }
@@ -66,11 +75,22 @@ class ProductoController extends Controller
             'tipo'        => 'sometimes|required|in:RATON,TECLADO,AURICULAR,MONITOR,ALFOMBRILLA,OTRO',
             'descripcion' => 'sometimes|nullable|string',
             'fecha_salida'=> 'sometimes|nullable|date',
+            'foto'        => 'sometimes|nullable|image|max:2048',
         ]);
 
-        $producto->update($request->only([
+        $data = $request->only([
             'modelo', 'marca', 'tipo', 'descripcion', 'fecha_salida'
-        ]));
+        ]);
+
+        if ($request->hasFile('foto')) {
+            if ($producto->foto && Storage::disk('public')->exists($producto->foto)) {
+                Storage::disk('public')->delete($producto->foto);
+            }
+            $path = $request->file('foto')->store('photos/products', 'public');
+            $data['foto'] = $path;
+        }
+
+        $producto->update($data);
 
         return response()->json($producto);
     }
@@ -78,6 +98,10 @@ class ProductoController extends Controller
     // Eliminar producto (solo ADMIN)
     public function destroy(Producto $producto)
     {
+        if ($producto->foto && Storage::disk('public')->exists($producto->foto)) {
+            Storage::disk('public')->delete($producto->foto);
+        }
+
         $producto->delete();
 
         return response()->json([
