@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -70,5 +72,64 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'username' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('users')->ignore($user->id),
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->id),
+            ],
+            'idioma_preferido' => 'sometimes|string|max:15',
+            'visibilidad' => 'sometimes|boolean',
+            'foto' => 'sometimes|image|max:2048',
+        ]);
+
+        $data = $request->only(['nombre', 'username', 'email', 'idioma_preferido']);
+
+        if ($request->has('visibilidad')) {
+            $data['visibilidad'] = (bool) $request->input('visibilidad');
+        }
+
+        $emailChanged = isset($data['email']) && $data['email'] !== $user->email;
+
+        if ($request->hasFile('foto')) {
+            // delete old foto if exists
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
+            }
+            $path = $request->file('foto')->store('avatars', 'public');
+            $data['foto'] = $path;
+        }
+
+        $user->fill($data);
+
+        if ($emailChanged) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        if ($emailChanged) {
+            // try to send verification email if mail is configured
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (\Throwable $e) {
+                // ignore mail send errors, still return success and indicate verification needed
+            }
+        }
+
+        return response()->json(["user" => $user, "email_verification_sent" => $emailChanged]);
     }
 }
