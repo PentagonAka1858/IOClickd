@@ -187,9 +187,14 @@ export const Productos = () => {
 
   return (
     <div className="productos-page">
-      <header className="page-header">
-        <h1>Catálogo de Productos</h1>
-        <p>Encuentra y analiza los mejores periféricos y componentes gaming</p>
+      <header className="page-header compare-header-row">
+        <div>
+          <h1>Catálogo de Productos</h1>
+          <p>Encuentra y analiza los mejores periféricos y componentes gaming</p>
+        </div>
+        <Link to="/productos/comparar-ratones" className="btn btn-primary">
+          Comparar Ratones
+        </Link>
       </header>
 
       {/* Barra de filtros */}

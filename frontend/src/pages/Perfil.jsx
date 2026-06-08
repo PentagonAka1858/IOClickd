@@ -6,19 +6,25 @@ import '../styles/Perfil.scss';
 export const Perfil = () => {
   const { user, setUser } = useAuth();
   const [nombre, setNombre] = useState('');
+  const [username, setUsername] = useState('');
   const [idiomaPreferido, setIdiomaPreferido] = useState('es');
+  const [email, setEmail] = useState('');
   const [fotoFile, setFotoFile] = useState(null);
   const [fotoPreview, setFotoPreview] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [visibilidad, setVisibilidad] = useState(true);
   
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (user) {
       setNombre(user.nombre || '');
+      setUsername(user.username || '');
+      setEmail(user.email || '');
       setIdiomaPreferido(user.idioma_preferido || 'es');
+      setVisibilidad(typeof user.visibilidad === 'boolean' ? user.visibilidad : true);
       setFotoPreview(user.foto ? `http://localhost:8000/storage/${user.foto}` : '/user.placeholder.png');
     }
   }, [user]);
@@ -54,6 +60,9 @@ export const Perfil = () => {
       const formData = new FormData();
       formData.append('nombre', nombre.trim());
       formData.append('idioma_preferido', idiomaPreferido);
+      formData.append('username', username.trim() || '');
+      formData.append('email', email.trim());
+      formData.append('visibilidad', visibilidad ? 1 : 0);
       if (fotoFile) {
         formData.append('foto', fotoFile);
       }
@@ -64,8 +73,13 @@ export const Perfil = () => {
         },
       });
 
-      setUser(response.data);
-      setMessage('Perfil actualizado correctamente.');
+      const respUser = response.data.user ?? response.data;
+      setUser(respUser);
+      if (response.data.email_verification_sent) {
+        setMessage('Perfil actualizado. Se ha enviado un email de verificación al nuevo correo.');
+      } else {
+        setMessage('Perfil actualizado correctamente.');
+      }
       setFotoFile(null);
     } catch (err) {
       console.error('Error al actualizar el perfil:', err);
@@ -143,6 +157,44 @@ export const Perfil = () => {
                 placeholder="Ingresa tu nombre"
               />
             </div>
+
+              <div className="form-group">
+                <label htmlFor="username">Nombre de usuario</label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="nombre_de_usuario"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="tu@email.com"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="visibilidad">Visibilidad de perfil</label>
+                <div>
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      id="visibilidad"
+                      checked={visibilidad}
+                      onChange={(e) => setVisibilidad(e.target.checked)}
+                    />
+                    <span className="slider" />
+                  </label>
+                </div>
+              </div>
 
             <div className="form-group">
               <label htmlFor="idioma_preferido">Idioma preferido</label>
