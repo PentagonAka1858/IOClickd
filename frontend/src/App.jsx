@@ -16,6 +16,7 @@ import { MisListas } from './pages/MisListas';
 import { ListaDetalle } from './pages/ListaDetalle';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Perfil } from './pages/Perfil';
+import { CompararRatones } from './pages/CompararRatones';
 import { NotFound } from './pages/NotFound';
 import './App.scss';
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/verify-email" element={<EmailVerification />} />
             <Route path="/resend-verification" element={<ResendVerificationEmail />} />
             <Route path="/productos" element={<Productos />} />
+            <Route path="/productos/comparar-ratones" element={<CompararRatones />} />
             <Route path="/productos/:id" element={<ProductoDetail />} />
 
             {/* Rutas protegidas */}
