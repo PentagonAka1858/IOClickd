@@ -12,7 +12,7 @@ services:
       MYSQL_USER: ${DB_USERNAME:-pfg_user}
       MYSQL_PASSWORD: ${DB_PASSWORD:-pfg_password}
     ports:
-      - "3306:3306"
+      - "${DB_HOST_PORT:-3307}:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./db_init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -53,14 +53,13 @@ services:
     networks:
       - pfg_network
     command: >
-      sh -c "
-        php artisan config:cache &&
-        php artisan route:cache &&
-        php artisan view:cache &&
-        php artisan migrate --force &&
-        php artisan db:seed &&
-        php artisan serve --host=0.0.0.0 --port=8000
-      "
+        sh -c "
+            php artisan config:clear &&
+            php artisan cache:clear &&
+            php artisan migrate --force &&
+            php artisan db:seed &&
+            php artisan serve --host=0.0.0.0 --port=8000
+        "
 
   # React Frontend Service
   frontend:
@@ -73,10 +72,12 @@ services:
       - backend
     environment:
       VITE_API_URL: http://localhost:8000
+    command: >
+      sh -c "npm run build && npm run preview -- --host 0.0.0.0 --port 4173"
     volumes:
       - ../frontend:/app
       - /app/node_modules
-      - /app/dist
+      - ../frontend/dist:/app/dist
     networks:
       - pfg_network
 

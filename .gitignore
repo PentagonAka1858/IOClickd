@@ -17,3 +17,4 @@ Thumbs.db
 
 python/*.csv
 python/*.json
+frontend/package-lock.json
