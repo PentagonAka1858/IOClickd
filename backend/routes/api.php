@@ -21,7 +21,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
 // Email verification routes
-Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('api.verify-email')->middleware('signed');
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('api.verify-email');
 Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->name('api.resend-verification-email');
 
 // Rutas públicas

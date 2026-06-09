@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -15,7 +16,6 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        echo "Register endpoint hit with data: " . json_encode($request->all());
         $request->validate([
             'nombre'           => 'required|string|max:255',
             'email'            => 'required|email|unique:users',
@@ -30,10 +30,12 @@ class AuthController extends Controller
             'idioma_preferido' => $request->idioma_preferido ?? 'es',
         ]);
 
-        // Send email verification notification
-        $user->sendEmailVerificationNotification();
-
-        Auth::login($user);
+        // Send email verification notification synchronously
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::error('Unable to send email verification during registration.', ['exception' => $e]);
+        }
 
         return response()->json([
             'user'    => $user,
@@ -53,6 +55,12 @@ class AuthController extends Controller
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Las credenciales no son correctas.'],
+            ]);
+        }
+
+        if ($user->email_verified_at === null) {
+            throw ValidationException::withMessages([
+                'email' => ['Debes verificar tu correo antes de iniciar sesión.'],
             ]);
         }
 
@@ -130,7 +138,7 @@ class AuthController extends Controller
             try {
                 $user->sendEmailVerificationNotification();
             } catch (\Throwable $e) {
-                // ignore mail send errors, still return success and indicate verification needed
+                Log::error('Unable to send email verification after email change.', ['exception' => $e, 'user_id' => $user->id]);
             }
         }
 

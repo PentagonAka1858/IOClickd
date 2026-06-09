@@ -1,18 +1,22 @@
-<x-mail::message>
-# Verify Email Address
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verifica tu correo</title>
+</head>
+<body>
+    <p>Hola {{ $user->nombre ?? $user->email }},</p>
 
-Hi {{ $user->nombre }},
+    <p>Gracias por registrarte. Por favor, verifica tu correo haciendo clic en el siguiente enlace:</p>
 
-Please click the button below to verify your email address:
+    <p>
+        <a href="{{ $verificationUrl }}" target="_blank">
+            Verificar correo
+        </a>
+    </p>
 
-<x-mail::button :url="$verificationUrl">
-Verify Email
-</x-mail::button>
+    <p>Si tú no creaste esta cuenta, puedes ignorar este mensaje.</p>
 
-This verification link will expire in 24 hours.
-
-If you didn't create this account, please ignore this email.
-
-Thanks,<br>
-{{ config('app.name') }}
-</x-mail::message>
+    <p>Un saludo y bienvenido a {{ config('app.name') }}!</p>
+</body>
+</html>

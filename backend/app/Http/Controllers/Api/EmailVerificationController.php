@@ -47,7 +47,13 @@ class EmailVerificationController extends Controller
             ], 400);
         }
 
-        $user->sendEmailVerificationNotification();
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Unable to send verification email at this time. Please try again later.',
+            ], 500);
+        }
 
         return response()->json([
             'message' => 'Verification email sent. Please check your inbox.',
