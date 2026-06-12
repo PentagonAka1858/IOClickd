@@ -1,377 +1,439 @@
 
-# Documentación completa
+# Documentación técnica completa — IOClickd
 
-Este fichero contiene la documentación completa original del `README.md` del proyecto, movida aquí para mantener el README raíz más conciso. Consulta el índice de asignaturas en [docs/index.md](../index.md).
+Este fichero es la referencia principal del proyecto. Consulta el índice de asignaturas en [`docs/index.md`](../index.md).
 
-## 1. Manual de Usuario
+---
+
+## 1. Manual de usuario
 
 ### 1.1 Registro e inicio de sesión
 
-- Accede a la aplicación frontend en `/login` o `/register`.
-- Registro: completa nombre, email, contraseña y confirmación de contraseña.
-- Inicio de sesión: utiliza email y contraseña.
-- El frontend maneja la sesión con cookies y hace peticiones a `/api/login`, `/api/register` y `/api/user`.
-- Tras iniciar sesión, se desbloquean rutas protegidas como inventario, listas, consultas y administración.
+- Accede a `/register` para crear una cuenta: nombre, email, contraseña y confirmación.
+- Tras registrarte recibes un **email de verificación**; hasta que no lo confirmes algunas rutas pueden estar restringidas.
+- Si no has recibido el correo, puedes reenvíarlo desde `/resend-verification`.
+- Inicio de sesión en `/login` con email y contraseña.
+- La sesión se gestiona con **cookies HttpOnly** a través de Laravel Sanctum — no hay tokens JWT en localStorage.
+- Tras autenticarte se desbloquean: inventario, listas, consultas, perfil propio y (si eres admin) el panel de administración.
 
-### 1.2 Uso de favoritos
+### 1.2 Catálogo de productos
 
-- El backend incluye rutas de favoritos (`/api/favoritos`), pero en la interfaz actual no existe un flujo visible finalizado para marcar un producto como favorito.
-- Si se desea completar esta funcionalidad, se recomienda añadir botones en la lista de productos y un apartado en el frontend.
+- Ruta pública: `/productos`.
+- Búsqueda por texto libre (marca o modelo) y filtro por tipo: `RATON`, `TECLADO`, `AURICULAR`, `MONITOR`, `ALFOMBRILLA`, `OTRO`.
+- Cada tarjeta muestra imagen (o icono SVG si no hay), marca, modelo y tipo.
+- Sin iniciar sesión puedes navegar al detalle; con sesión puedes añadir al inventario o a una lista directamente desde la tarjeta.
 
-### 1.3 Uso de listas personales
+### 1.3 Detalle de producto
 
-- Ruta disponible para usuarios autenticados: `/listas`.
-- Permite:
-	- Crear nuevas listas personales.
-	- Editar nombre, descripción y visibilidad (pública/privada).
-	- Eliminar listas.
-- Desde el catálogo de productos (`/productos`) se pueden añadir productos a una lista existente o crear una lista nueva al vuelo.
-- Cada lista puede agrupar productos para seguimiento posterior.
+- Ruta: `/productos/:id`.
+- Información básica del producto + especificaciones técnicas detalladas + características reales reportadas por la comunidad.
+- Sección de reseñas: puntuación de 1 a 10, comentario, votos (👍/👎), borrado de la propia reseña.
+- El nombre de cada reseñador es un enlace a su perfil público (`/perfiles/:id`).
+- Acciones rápidas: añadir al inventario, añadir a lista existente o crear una nueva al vuelo.
 
-### 1.4 Uso de inventario
+### 1.4 Comparador de ratones
 
-- Ruta disponible para usuarios autenticados: `/inventario`.
-- Permite:
-	- Añadir productos al inventario desde la vista de catálogo o detalle del producto.
-	- Ajustar la cantidad de cada producto guardado.
-	- Marcar un producto como principal/destacado.
-	- Eliminar productos del inventario.
+- Ruta pública: `/productos/comparar-ratones`.
+- Permite seleccionar hasta 2 ratones del catálogo y ver sus especificaciones lado a lado.
+- Los datos de comparación vienen de `caracteristicas_detalladas` en la API.
 
-### 1.5 Uso de reseñas
+### 1.5 Inventario personal
 
-- En la página de detalle de producto (`/productos/:id`) se puede:
-	- Ver reseñas existentes.
-	- Crear una nueva reseña si estás autenticado.
-	- Puntuar de 1 a 10 y escribir un comentario.
-	- Votar reseñas con pulgar arriba o abajo.
-	- Eliminar tu propia reseña.
+- Ruta protegida: `/inventario`.
+- Lista de productos que el usuario ha guardado.
+- Operaciones: ajustar cantidad, marcar como **principal/destacado**, eliminar.
+- Notificación visual de éxito al añadir un producto desde el catálogo.
 
-### 1.6 Uso de consultas y soporte
+### 1.6 Listas personales
 
-- Ruta disponible para usuarios autenticados: `/consultas`.
-- Permite:
-	- Crear una consulta o solicitud de soporte.
-	- Ver el listado de consultas propias con su estado (`ABIERTA`, `EN_PROCESO`, `CERRADA`).
-	- Acceder al detalle de cada consulta en `/consultas/:id` para ver el historial de mensajes.
-- En la vista de detalles de consulta se puede continuar la conversación con el equipo de soporte.
+- Ruta protegida: `/listas`.
+- Crear, editar (nombre, descripción, visibilidad pública/privada) y eliminar listas.
+- Detalle de lista en `/listas/:id`: ver y eliminar productos de la lista.
+- Desde el catálogo o detalle de producto se puede añadir a una lista existente o crear una nueva directamente.
 
-### 1.7 Navegación y filtrado de productos
+### 1.7 Consultas y soporte
 
-- Barra principal de la aplicación:
-	- `Productos`
-	- `Mi Inventario`
-	- `Mis Listas`
-	- `Consultas`
-	- `Admin` (solo para usuarios con rol ADMIN/MOD)
-- Catálogo de productos (`/productos`):
-	- Búsqueda por texto libre en marca o modelo.
-	- Filtrado por tipo de producto: `RATON`, `TECLADO`, `AURICULAR`, `MONITOR`, `ALFOMBRILLA`, `OTRO`.
-	- Cada tarjeta de producto permite acceder al detalle y acciones adicionales si el usuario está autenticado.
+- Ruta protegida: `/consultas`.
+- Crear una consulta nueva (mensaje inicial).
+- Listado de tus consultas con estado: `ABIERTA`, `EN_PROCESO`, `CERRADA`.
+- Detalle en `/consultas/:id`: historial de mensajes y botón para continuar la conversación.
+- El equipo de soporte (usuarios con rol `MOD` o `ADMIN`) puede asignar y cerrar consultas.
 
-## 2. Manual de Instalación y Despliegue
+### 1.8 Perfiles de usuario
+
+- Tu propio perfil: `/perfil` (protegido). Puedes editar datos básicos.
+- Perfiles públicos: `/perfiles` (búsqueda) y `/perfiles/:id` (detalle).
+- En el perfil público puedes ver el inventario compartido del usuario, sus listas públicas y seguirle/dejar de seguirle.
+
+### 1.9 Panel de administración
+
+- Ruta protegida (solo `ADMIN`/`MOD`): `/admin`.
+- Métricas generales: usuarios, productos, reseñas.
+- Gestión de usuarios: ver listado, activar/desactivar cuenta, eliminar.
+- Gestión de productos: crear (`/admin/productos/create`), editar (`/admin/productos/:id/edit`), eliminar.
+- Moderación de reseñas: ocultar/mostrar reseñas reportadas.
+
+---
+
+## 2. Manual de instalación y despliegue
 
 ### 2.1 Requisitos del sistema
 
-- PHP 8.1+ (recomendado para Laravel 11/12).
-- Composer.
-- Node.js 18+ / npm 10+.
-- Base de datos compatible con Laravel: MySQL, MariaDB, SQLite, PostgreSQL.
-- Git para clonar el repositorio.
+**Desarrollo local:**
+- PHP 8.2+ (el Dockerfile usa PHP 8.4)
+- Composer 2
+- Node.js 20+ / npm 10+
+- MySQL 8.0 (o MariaDB compatible)
+- Git
+
+**Despliegue con Docker (recomendado):**
+- Docker Engine 24+
+- Docker Compose v2
 
 ### 2.2 Configuración del backend
 
-1. En el directorio `backend`:
-	 ```bash
-	 cd backend
-	 composer install
-	 cp .env.example .env
-	 php artisan key:generate
-	 ```
-2. Configura la base de datos en `backend/.env`:
-	 - `DB_CONNECTION`
-	 - `DB_HOST`
-	 - `DB_PORT`
-	 - `DB_DATABASE`
-	 - `DB_USERNAME`
-	 - `DB_PASSWORD`
-3. Si usas SQLite, ajusta `DB_CONNECTION=sqlite` y crea el archivo de base de datos.
-4. Ejecuta migraciones:
-	 ```bash
-	 php artisan migrate
-	 ```
-5. Inicia el servidor backend:
-	 ```bash
-	 php artisan serve
-	 ```
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+Edita `backend/.env` con tus datos de base de datos:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pfg_db
+DB_USERNAME=root
+DB_PASSWORD=tu_password
+```
+
+Luego:
+
+```bash
+php artisan migrate
+php artisan db:seed   # opcional, carga datos de ejemplo
+php artisan serve     # escucha en http://localhost:8000
+```
 
 ### 2.3 Configuración del frontend
 
-1. En el directorio `frontend`:
-	 ```bash
-	 cd frontend
-	 npm install
-	 npm run dev
-	 ```
-2. El frontend está configurado para consumir el backend en `http://localhost:8000/api`.
-3. Si el backend se sirve en otra dirección, actualiza `frontend/src/services/api.js`.
+```bash
+cd frontend
+npm install
+npm run dev   # Vite arranca en http://localhost:5173
+```
 
-### 2.4 Variables de entorno
+El frontend consume la API en `http://localhost:8000/api`. Si cambias el puerto del backend, actualiza la baseURL en [`frontend/src/services/api.js`](../../frontend/src/services/api.js).
+
+### 2.4 Variables de entorno relevantes
 
 #### Backend (`backend/.env`)
 
-- `APP_NAME`
-- `APP_ENV`
-- `APP_KEY`
-- `APP_DEBUG`
-- `APP_URL`
-- `DB_CONNECTION`
-- `DB_HOST`
-- `DB_PORT`
-- `DB_DATABASE`
-- `DB_USERNAME`
-- `DB_PASSWORD`
-- `SESSION_DRIVER`
-- `SESSION_DOMAIN`
-- `MAIL_MAILER`
-- `VITE_APP_NAME`
+| Variable | Descripción |
+|----------|-------------|
+| `APP_NAME` | Nombre de la app (IOClickd) |
+| `APP_ENV` | `local` / `production` |
+| `APP_KEY` | Clave generada por `artisan key:generate` |
+| `APP_DEBUG` | `true` en dev, `false` en prod |
+| `APP_URL` | URL del backend |
+| `FRONTEND_URL` | URL del frontend (para CORS y redirects de email) |
+| `DB_*` | Conexión a MySQL |
+| `SESSION_DRIVER` | `cookie` (necesario para Sanctum SPA) |
+| `SESSION_DOMAIN` | Dominio compartido entre front y back |
+| `MAIL_MAILER` | Driver de correo (`smtp`, `log`, etc.) |
+| `MAIL_FROM_ADDRESS` | Email de origen para verificaciones |
 
 #### Frontend
 
-- No hay variables de entorno definidas en el frontend para el API base en el proyecto actual.
-- El backend se alcanza desde `frontend/src/services/api.js` mediante `http://localhost:8000`.
+- En desarrollo no se necesita ningún `.env` especial.
+- En producción (Docker), se inyecta `VITE_API_URL` como variable de entorno al hacer `npm run build`.
 
 ### 2.5 Despliegue con Docker
 
-- No se ha podido llegar a realizar esto, por lo que este punto no consta.
-- Por tanto, no se incluye un procedimiento de despliegue Docker en este README.
+El directorio `docker/` contiene toda la configuración necesaria para levantar el proyecto en contenedores.
+
+**Servicios incluidos en `docker-compose.yml`:**
+
+| Servicio | Imagen base | Función |
+|----------|------------|---------|
+| `db` | `mysql:8.0` | Base de datos persistente |
+| `backend` | `php:8.4-fpm` + Composer | API Laravel |
+| `frontend` | `node:20-alpine` | Build de Vite y preview |
+| `nginx` | `nginx:alpine` | Proxy inverso, SSL y servicio de estáticos |
+
+**Pasos para levantar:**
+
+```bash
+cd docker
+cp .env.example .env   # ajusta credenciales si quieres
+docker-compose up -d --build
+```
+
+Al arrancar, el entrypoint del backend ejecuta automáticamente:
+- `php artisan config:clear`
+- `php artisan migrate --force`
+- `php artisan db:seed`
+
+**Acceso:**
+
+| Recurso | URL |
+|---------|-----|
+| Aplicación web | `http://localhost` |
+| API REST | `http://localhost:8000/api` |
+| MySQL (externo) | `localhost:3307` |
+
+**Comandos útiles:**
+
+```bash
+# Ver logs en tiempo real
+docker-compose logs -f backend
+
+# Ejecutar Artisan dentro del contenedor
+docker-compose exec backend php artisan tinker
+
+# Parar todo (conserva la BD)
+docker-compose down
+
+# Parar y borrar volúmenes (DESTRUYE la BD)
+docker-compose down -v
+```
+
+Más detalle en [`docker/README.md`](../../docker/README.md).
+
+---
 
 ## 3. Documentación técnica
 
 ### 3.1 Arquitectura del sistema
 
-- `backend/`: API REST construida con Laravel.
-	- Autenticación con Sanctum y cookies.
-	- Rutas públicas y rutas protegidas por `auth:sanctum`.
-	- Controladores separados por recursos (productos, listas, inventario, consultas, reseñas, admin, etc.).
-- `frontend/`: aplicación SPA con React y Vite.
-	- Gestión del estado de usuario con `AuthContext`.
-	- Axios con `withCredentials` para enviar cookies de sesión y token CSRF.
-	- Rutas protegidas mediante `ProtectedRoute`.
+```
+┌─────────────────────────────────┐
+│  Navegador (usuario)            │
+│  React 18 + Vite + SCSS         │
+│  React Router v6 (SPA)          │
+│  Axios + cookies (Sanctum)      │
+└──────────────┬──────────────────┘
+               │ HTTP/HTTPS (JSON)
+┌──────────────▼──────────────────┐
+│  Nginx (proxy inverso + SSL)    │
+└──────┬──────────────┬───────────┘
+       │              │
+┌──────▼──────┐  ┌────▼───────────┐
+│  Laravel 11 │  │  Vite preview  │
+│  PHP 8.4    │  │  /dist estático│
+│  Sanctum    │  └────────────────┘
+└──────┬──────┘
+       │
+┌──────▼──────┐
+│  MySQL 8.0  │
+└─────────────┘
+```
 
-### 3.2 Modelo de datos (E/R)
+**Backend (`backend/`):**
+- API REST con Laravel 11.
+- Autenticación stateful con **Laravel Sanctum** y cookies HttpOnly — no hay JWT.
+- CORS configurado para aceptar el origen del frontend con `withCredentials`.
+- Rutas separadas: públicas y protegidas por `auth:sanctum`.
+- Controladores organizados en `app/Http/Controllers/Api/`.
+- Modelos en `app/Models/`.
+- Verificación de email con enlace firmado.
 
-Tablas principales y relaciones:
+**Frontend (`frontend/`):**
+- SPA con **React 18** y **Vite** como bundler.
+- Estilos con **SCSS** (variables globales en `styles/variables.scss`, partials en `styles/partials/`).
+- Estado de autenticación global con `AuthContext` (Context API).
+- Rutas protegidas con el componente `ProtectedRoute`.
+- Peticiones HTTP con **Axios** configurado con `withCredentials: true`.
+- Páginas principales en `src/pages/`, componentes reutilizables en `src/components/`, servicios API en `src/services/api.js`.
 
-- `users`
-	- Usuarios registrados.
-	- Relación con listas, inventario, favoritos, reseñas, consultas, seguimientos.
+**Python (`python/`):**
+- Script `webscrapper.py` que usa **Playwright** (navegador headless) + **BeautifulSoup4** para extraer datos de ratones desde RTINGS.
+- Genera `mice_dataset.json` y `mice_dataset.csv` usados para poblar el catálogo.
+- Dependencias en `requirements.txt`.
 
-- `productos`
-	- Productos con `modelo`, `marca`, `tipo`, `descripcion`, `fecha_salida`.
-	- Relación con reseñas, inventario, favoritos, listas, características y usuarios.
+### 3.2 Modelo de datos (E/R simplificado)
 
-- `listas_personales`
-	- `user_id` → dueño de la lista.
-	- `nombre_lista`, `descripcion`, `publica`.
-	- Relación con `productos_en_listas`.
+| Tabla | Campos clave | Relaciones |
+|-------|-------------|-----------|
+| `users` | `nombre`, `email`, `password`, `rol` | listas, inventario, favoritos, reseñas, consultas, seguimientos |
+| `productos` | `modelo`, `marca`, `tipo`, `descripcion`, `imagen`, `fecha_salida` | reseñas, inventario, favoritos, listas, características |
+| `listas_personales` | `user_id`, `nombre_lista`, `descripcion`, `publica` | `productos_en_listas` (pivote) |
+| `productos_en_listas` | `lista_id`, `producto_id` | pivote N:M |
+| `inventario_personal` | `user_id`, `producto_id`, `cantidad`, `principal` | — |
+| `favoritos` | `user_id`, `producto_id` | — |
+| `resenias` | `user_id`, `producto_id`, `puntuacion`, `comentario`, `voto_up`, `voto_down`, `visible` | — |
+| `consultas` | `cliente_id`, `soporte_id`, `estado`, `fecha_cierre` | `mensajes` |
+| `mensajes` | `consulta_id`, `emisor_id`, `contenido`, `fecha_envio` | — |
+| `caracteristicas_detalladas` | `producto_id` + campos técnicos extendidos | — |
+| `caracteristicas_reales` | `producto_id`, `user_id` + datos prácticos reportados | — |
+| `seguimientos` | `seguidor_id`, `seguido_id` | — |
 
-- `productos_en_listas`
-	- Tabla pivote entre `listas_personales` y `productos`.
+### 3.3 Páginas del frontend
 
-- `inventario_personal`
-	- `user_id`, `producto_id`, `cantidad`, `principal`.
-	- Representa productos guardados en el inventario de cada usuario.
+| Ruta | Componente | Acceso |
+|------|-----------|--------|
+| `/` | `Home.jsx` | Público |
+| `/login` | `Login.jsx` | Público |
+| `/register` | `Register.jsx` | Público |
+| `/verify-email` | `EmailVerification.jsx` | Público |
+| `/resend-verification` | `ResendVerificationEmail.jsx` | Público |
+| `/productos` | `Productos.jsx` | Público |
+| `/productos/comparar-ratones` | `CompararRatones.jsx` | Público |
+| `/productos/:id` | `ProductoDetail.jsx` | Público |
+| `/inventario` | `Inventario.jsx` | 🔒 Auth |
+| `/listas` | `MisListas.jsx` | 🔒 Auth |
+| `/listas/:id` | `ListaDetalle.jsx` | 🔒 Auth |
+| `/consultas` | `Consultas.jsx` | 🔒 Auth |
+| `/consultas/:id` | `ConsultaDetail.jsx` | 🔒 Auth |
+| `/perfil` | `Perfil.jsx` | 🔒 Auth |
+| `/perfiles` | `BuscarPerfiles.jsx` | Público |
+| `/perfiles/:id` | `PerfilPublico.jsx` | Público |
+| `/admin` | `AdminDashboard.jsx` | 🔒 Admin/Mod |
+| `/admin/productos/create` | `AdminProductCreate.jsx` | 🔒 Admin/Mod |
+| `/admin/productos/:id/edit` | `AdminProductEdit.jsx` | 🔒 Admin/Mod |
 
-- `favoritos`
-	- `user_id`, `producto_id`.
-	- Marca favoritos de producto por usuario.
-
-- `resenias`
-	- `user_id`, `producto_id`, `puntuacion`, `comentario`.
-	- `voto_up`, `voto_down`, `visible`.
-	- Cada usuario puede reseñar un producto una vez.
-
-- `consultas`
-	- `cliente_id`, `soporte_id`, `estado`, `fecha_cierre`.
-	- Soporte interno asociado a la consulta.
-
-- `mensajes`
-	- `consulta_id`, `emisor_id`, `contenido`, `fecha_envio`.
-	- Conversación ligada a cada consulta.
-
-- `caracteristicas_detalladas`
-	- Información técnica extendida de un producto.
-
-- `caracteristicas_reales`
-	- Datos de características prácticas o reales ligados a un producto.
-
-- `seguimientos`
-	- `seguidor_id`, `seguido_id`.
-	- Representa la relación de seguimiento entre usuarios.
-
-### 3.3 Wireframes principales
-
-- **Home**: resumen de la aplicación, acceso a login/register y navegación principal.
-- **Productos**: catálogo con búsqueda y filtro por tipo; acciones rápidas para inventario y listas.
-- **Detalle de Producto**: información del producto, especificaciones, reseñas y formulario de opinión.
-- **Mis Listas**: creación, edición y eliminación de listas personales.
-- **Detalle de Lista**: visualización de los productos que contiene una lista.
-- **Inventario**: edición de cantidades, marcado de producto destacado y borrado de productos guardados.
-- **Consultas**: formulario para enviar solicitudes y listado de tickets de soporte.
-- **Detalle de Consulta**: vista de mensajes de la consulta y estado de resolución.
-- **Admin Dashboard**: métricas, gestión de usuarios, productos y reseñas (solo ADMIN/MOD).
+---
 
 ## 4. Documentación de la API
 
-### 4.1 Aviso
+### 4.1 Base URL
 
-- No se ha podido llegar a realizar esto, por lo que este punto no consta.
-- La documentación de la API se presenta aquí de forma manual.
+```
+http://localhost:8000/api
+```
 
-### 4.2 Base URL
+Todas las peticiones requieren la cabecera `X-XSRF-TOKEN` (gestionada automáticamente por Axios al tener `withCredentials: true`) y que se haya obtenido previamente la cookie CSRF desde `/sanctum/csrf-cookie`.
 
-- `http://localhost:8000/api`
+### 4.2 Endpoints públicos
 
-### 4.3 Endpoints principales
+#### Autenticación
 
-#### Autenticación pública
-
-- `POST /register`
-	- Registra un usuario.
-	- Parámetros: `nombre`, `email`, `password`, `password_confirmation`.
-	- Respuesta: objeto de usuario y datos de sesión.
-
-- `POST /login`
-	- Autentica al usuario.
-	- Parámetros: `email`, `password`.
-	- Respuesta: objeto de usuario.
+| Método | Ruta | Descripción | Parámetros |
+|--------|------|-------------|-----------|
+| `POST` | `/register` | Registro de usuario | `nombre`, `email`, `password`, `password_confirmation` |
+| `POST` | `/login` | Inicio de sesión | `email`, `password` |
+| `POST` | `/logout` | Cerrar sesión | — (auth) |
+| `GET` | `/user` | Usuario autenticado | — (auth) |
+| `GET` | `/email/verify/{id}/{hash}` | Verificar email | firmado |
+| `POST` | `/email/resend` | Reenviar verificación | — (auth) |
 
 #### Productos
 
-- `GET /productos`
-	- Recupera catálogo de productos.
-	- Parámetros opcionales: `buscar`, `tipo`.
-	- Respuesta: lista paginada o arreglo de productos.
+| Método | Ruta | Descripción | Parámetros |
+|--------|------|-------------|-----------|
+| `GET` | `/productos` | Catálogo (filtrable) | `buscar`, `tipo` |
+| `GET` | `/productos/{id}` | Detalle de producto | — |
+| `GET` | `/productos/{id}/caracteristicas-detalladas` | Specs técnicas | — |
+| `GET` | `/productos/{id}/resenias` | Reseñas del producto | — |
+| `GET` | `/productos/{id}/caracteristicas-reales` | Características reales | — |
+| `GET` | `/productos/{id}/usuarios` | Usuarios que lo tienen | — |
 
-- `GET /productos/{producto}`
-	- Recupera detalle de un producto.
+### 4.3 Endpoints autenticados (`auth:sanctum`)
 
-- `GET /productos/{producto}/caracteristicas-detalladas`
-	- Recupera especificaciones técnicas detalladas de un producto.
+#### Favoritos
 
-- `GET /productos/{productoId}/resenias`
-	- Recupera reseñas de un producto.
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/favoritos` | Mis favoritos |
+| `POST` | `/favoritos` | Añadir favorito (`producto_id`) |
+| `DELETE` | `/favoritos/{producto_id}` | Eliminar favorito |
 
-- `GET /productos/{productoId}/caracteristicas-reales`
-	- Recupera características reales del producto.
+#### Reseñas
 
-- `GET /productos/{productoId}/usuarios`
-	- Recupera usuarios que tienen ese producto en inventario.
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `POST` | `/resenias` | Crear reseña (`producto_id`, `puntuacion`, `comentario`) |
+| `PUT` | `/resenias/{id}` | Editar reseña |
+| `DELETE` | `/resenias/{id}` | Eliminar reseña |
+| `POST` | `/resenias/{id}/votar` | Votar reseña (`voto`: `up`/`down`) |
 
-#### Rutas autenticadas
+#### Listas personales
 
-- `POST /logout`
-	- Cierra la sesión.
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/listas` | Mis listas |
+| `POST` | `/listas` | Crear lista (`nombre_lista`, `descripcion`, `publica`) |
+| `PUT` | `/listas/{id}` | Editar lista |
+| `DELETE` | `/listas/{id}` | Eliminar lista |
+| `POST` | `/listas/{id}/productos` | Añadir producto (`producto_id`) |
+| `DELETE` | `/listas/{id}/productos/{producto_id}` | Quitar producto |
 
-- `GET /user`
-	- Obtiene usuario autenticado.
+#### Inventario
 
-##### Favoritos
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/inventario` | Mi inventario |
+| `POST` | `/inventario` | Añadir producto (`producto_id`, `cantidad`, `principal`) |
+| `PUT` | `/inventario/{producto_id}` | Actualizar (`cantidad`, `principal`) |
+| `DELETE` | `/inventario/{producto_id}` | Eliminar del inventario |
 
-- `GET /favoritos`
-- `POST /favoritos`
-	- Parámetros: `producto_id`.
-- `DELETE /favoritos/{producto_id}`
+#### Consultas
 
-##### Reseñas
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/consultas` | Mis consultas |
+| `POST` | `/consultas` | Nueva consulta (`contenido`) |
+| `GET` | `/consultas/{id}` | Detalle de consulta |
+| `POST` | `/consultas/{id}/mensajes` | Enviar mensaje (`contenido`) |
+| `GET` | `/consultas/{id}/mensajes` | Listar mensajes |
+| `DELETE` | `/consultas/{id}/mensajes/{msg_id}` | Eliminar mensaje |
+| `POST` | `/consultas/{id}/cerrar` | Cerrar consulta (soporte) |
+| `POST` | `/consultas/{id}/asignar` | Asignar agente (soporte) |
 
-- `POST /resenias`
-	- Parámetros: `producto_id`, `puntuacion`, `comentario`.
+#### Seguimientos
 
-- `PUT /resenias/{resenia}`
-- `DELETE /resenias/{resenia}`
-- `POST /resenias/{resenia}/votar`
-	- Parámetros: `voto` (`up`/`down`).
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `POST` | `/seguimientos/{id}` | Seguir usuario |
+| `DELETE` | `/seguimientos/{id}` | Dejar de seguir |
+| `GET` | `/seguimientos/seguidores` | Mis seguidores |
+| `GET` | `/seguimientos/siguiendo` | A quién sigo |
 
-##### Listas personales
+#### Características reales
 
-- `GET /listas`
-- `POST /listas`
-	- Parámetros: `nombre_lista`, `descripcion`, `publica`.
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `POST` | `/caracteristicas-reales` | Añadir característica real |
+| `DELETE` | `/caracteristicas-reales/{id}` | Eliminar |
 
-- `PUT /listas/{lista}`
-- `DELETE /listas/{lista}`
-- `POST /listas/{lista}/productos`
-	- Parámetros: `producto_id`.
+### 4.4 Endpoints de administración (rol `ADMIN`/`MOD`)
 
-- `DELETE /listas/{lista}/productos/{producto_id}`
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `POST` | `/productos` | Crear producto |
+| `PUT` | `/productos/{id}` | Editar producto |
+| `DELETE` | `/productos/{id}` | Eliminar producto |
+| `PATCH` | `/resenias/{id}/moderar` | Moderar reseña (ocultar/mostrar) |
+| `GET` | `/admin/estadisticas` | Métricas generales |
+| `GET` | `/admin/usuarios` | Listado de usuarios |
+| `GET` | `/admin/productos` | Listado de productos (admin) |
+| `GET` | `/admin/resenias` | Listado de reseñas |
+| `DELETE` | `/admin/usuarios/{id}` | Eliminar usuario |
+| `PATCH` | `/admin/usuarios/{id}/visibilidad` | Activar/desactivar cuenta |
 
-##### Inventario
-
-- `GET /inventario`
-- `POST /inventario`
-	- Parámetros: `producto_id`, `cantidad`, `principal`.
-
-- `PUT /inventario/{producto_id}`
-	- Parámetros: `cantidad`, `principal`.
-
-- `DELETE /inventario/{producto_id}`
-
-##### Consultas
-
-- `GET /consultas`
-- `POST /consultas`
-	- Parámetros: `contenido`.
-
-- `GET /consultas/{consulta}`
-- `POST /consultas/{consulta}/mensajes`
-	- Parámetros: `contenido`.
-
-- `POST /consultas/{consulta}/cerrar`
-- `POST /consultas/{consulta}/asignar`
-
-##### Mensajes de consulta
-
-- `GET /consultas/{consulta}/mensajes`
-- `GET /consultas/{consulta}/mensajes/{mensaje}`
-- `DELETE /consultas/{consulta}/mensajes/{mensaje}`
-
-##### Características reales
-
-- `POST /caracteristicas-reales`
-- `DELETE /caracteristicas-reales/{caracteristicaReal}`
-
-##### Moderación y administración
-
-- `POST /productos`
-- `PUT /productos/{producto}`
-- `DELETE /productos/{producto}`
-- `PATCH /resenias/{resenia}/moderar`
-- `GET /admin/estadisticas`
-- `GET /admin/usuarios`
-- `GET /admin/productos`
-- `GET /admin/resenias`
-- `DELETE /admin/usuarios/{user}`
-- `PATCH /admin/usuarios/{user}/visibilidad`
+---
 
 ## 5. Documentación legal
 
 ### 5.1 Política de privacidad
 
-- La aplicación almacena y procesa datos personales mínimos: nombre, email y credenciales de usuario.
-- Los datos se utilizan para autenticación, gestión de cuentas, soporte y funcionalidades relacionadas con productos.
-- No hay mecanismos adicionales de seguimiento comercial implementados en el frontend actual.
-- Los datos de usuario no deben compartirse con terceros fuera del propósito de la aplicación.
+- Los datos personales almacenados son los mínimos necesarios: nombre, email y contraseña (hasheada con bcrypt).
+- Se usan exclusivamente para autenticación, gestión de cuenta, soporte y funcionalidades propias de la aplicación.
+- No existe seguimiento comercial, publicidad ni venta de datos a terceros.
+- El usuario puede eliminar su cuenta a través del panel de administración (solicitándolo a un administrador).
 
 ### 5.2 Aviso legal
 
-- El software se ofrece "tal cual" y sin garantía expresa.
-- La información de productos, reseñas y consultas está orientada a la gestión interna de la aplicación.
-- No se garantiza la disponibilidad permanente del servicio ni la exactitud total de datos de terceros.
+- El software se proporciona con fines académicos, "tal cual", sin garantía expresa.
+- La información de productos, reseñas y consultas es gestionada internamente por los propios usuarios.
+- No se garantiza la disponibilidad permanente del servicio ni la exactitud de los datos de catálogo.
 
-### 5.3 Política de Cookies
+### 5.3 Política de cookies
 
-- La aplicación emplea cookies de sesión y CSRF a través de Laravel Sanctum para autenticación segura.
-- No hay política de cookies separada implementada en el repositorio actual.
-- Si en el futuro se agregan cookies de tracking o analíticas, será necesario documentar y aceptar su uso.
-
+- La aplicación usa **cookies de sesión y CSRF** gestionadas por Laravel Sanctum para la autenticación stateful.
+- Son cookies **HttpOnly** y **SameSite=Lax** — no accesibles desde JavaScript, lo que las protege de XSS.
+- No se implementan cookies de tracking, analíticas ni publicidad.
+- Si en el futuro se añaden herramientas de analítica, habrá que implementar el banner de consentimiento correspondiente (RGPD).
