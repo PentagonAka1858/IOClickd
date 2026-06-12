@@ -18,6 +18,8 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { Perfil } from './pages/Perfil';
 import { CompararRatones } from './pages/CompararRatones';
 import { NotFound } from './pages/NotFound';
+import { BuscarPerfiles } from './pages/BuscarPerfiles';
+import { PerfilPublico } from './pages/PerfilPublico';
 import './App.scss';
 
 function App() {
@@ -43,6 +45,10 @@ function App() {
             <Route path="/consultas/:id" element={<ProtectedRoute><ConsultaDetail /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
+
+            {/* Búsqueda de perfiles públicos */}
+            <Route path="/perfiles" element={<BuscarPerfiles />} />
+            <Route path="/perfiles/:id" element={<PerfilPublico />} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

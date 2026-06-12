@@ -1,195 +1,664 @@
-@use './variables' as *;
-@use 'sass:color';
+// ============================================================
+// Navbar.scss — Neobrutalist Sticky Navigation
+// ============================================================
+@use './partials/variables' as *;
+@use './partials/mixins' as *;
 
 .navbar {
-  background-color: $bg-white;
-  box-shadow: $shadow-md;
   position: sticky;
   top: 0;
-  z-index: 100;
-  margin-bottom: 2rem;
+  z-index: $z-navbar;
+  background: var(--color-primary); // Sólido, cambia con el tema
+  border-bottom: 3px solid #{$black};
+  height: $navbar-height;
+  width: 100%;
+  transition: background $transition-normal, border-color $transition-normal;
 
   .navbar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex-between;
+    @include container;
+    height: 100%;
+    gap: $space-md;
   }
 
+  // ── BRAND / LOGO ──────────────────────────────────────────
+
   .navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: $primary-color;
     text-decoration: none;
     display: flex;
     align-items: center;
-
-    .logo-text {
-      background: linear-gradient(135deg, $primary-color, $info-color);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    gap: $space-sm;
+    flex-shrink: 0;
+    transition: transform $transition-fast;
 
     &:hover {
-      opacity: 0.8;
+      transform: translate(-1px, -1px);
+    }
+
+    .logo-img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .logo-text {
+      font-family: $font-display;
+      font-weight: $fw-black;
+      font-size: $text-xl;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: baseline;
+      gap: 1px;
+
+      .logo-io {
+        color: var(--color-primary-text); // Siempre negro: el navbar siempre es amarillo
+        font-size: $text-lg;
+        font-weight: $fw-black;
+        opacity: 0.7;
+      }
+
+      .logo-name {
+        color: var(--color-primary-text);
+        font-weight: $fw-black;
+      }
+
+      .logo-bang {
+        color: var(--color-accent);
+        font-size: $text-2xl;
+        font-weight: $fw-black;
+        line-height: 0.9;
+        display: inline-block;
+        transition: transform $transition-fast;
+      }
+    }
+
+    &:hover .logo-bang {
+      transform: rotate(-10deg) scale(1.2);
     }
   }
+
+  // ── NAV CENTRAL ───────────────────────────────────────────
 
   .navbar-menu {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 2rem;
+    justify-content: space-between;
+    gap: $space-lg;
     flex: 1;
-    margin-left: 3rem;
+
+    @include navbar-collapse {
+      display: none;
+
+      &.is-open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        inset: $navbar-height 0 0 0;
+        background: var(--color-primary);
+        border-top: 3px solid var(--color-border);
+        padding: $space-xl $space-lg;
+        gap: $space-xl;
+        z-index: calc(#{$z-navbar} - 1);
+        overflow-y: auto;
+        align-items: flex-start;
+      }
+    }
   }
 
   .navbar-nav {
-    list-style: none;
     display: flex;
-    gap: 2rem;
+    align-items: center;
+    gap: $space-xs;
+    list-style: none;
+    flex-wrap: wrap;
     margin: 0;
     padding: 0;
 
-    .nav-item {
-      .nav-link {
-        color: $text-color;
-        text-decoration: none;
-        font-weight: 500;
-        transition: $transition;
-        padding: 0.5rem 0;
-        border-bottom: 2px solid transparent;
-
-        &:hover {
-          color: $primary-color;
-          border-bottom-color: $primary-color;
-        }
-      }
-    }
-  }
-
-  .navbar-auth {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-
-    .user-section {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      .user-profile-link {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        color: $text-color;
-        transition: $transition;
-
-        &:hover {
-          color: $primary-color;
-        }
-
-        .user-avatar {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid $primary-color;
-        }
-      }
-
-      .user-name {
-        color: $text-color;
-        font-weight: 500;
-      }
-
-      .logout-btn {
-        @include button-reset;
-        background-color: $danger-color;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: $border-radius;
-        font-weight: 500;
-        transition: $transition;
-
-        &:hover {
-          background-color: color.adjust($danger-color, $lightness: 10%);
-        }
-      }
-    }
-
-    .auth-buttons {
-      display: flex;
-      gap: 1rem;
-    }
-  }
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: $border-radius;
-  border: none;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: $transition;
-  display: inline-block;
-  text-align: center;
-  font-size: 1rem;
-
-  &.btn-primary {
-    background-color: $primary-color;
-    color: white;
-
-    &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
-    }
-  }
-
-  &.btn-outline {
-    background-color: transparent;
-    color: $primary-color;
-    border: 2px solid $primary-color;
-
-    &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
-      color: white;
-    }
-  }
-}
-
-// Media queries para mobile
-@media (max-width: 768px) {
-  .navbar {
-    .navbar-menu {
-      flex-direction: column;
-      gap: 1rem;
-      margin-left: 0;
-      align-items: flex-start;
-    }
-
-    .navbar-nav {
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .navbar-auth {
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
-
-      .auth-buttons {
+    @include navbar-collapse {
+      .is-open & {
         flex-direction: column;
+        align-items: flex-start;
         width: 100%;
+      }
+    }
+  }
 
-        a {
+  .nav-item {
+    .nav-link {
+      display: inline-block;
+      padding: $space-xs $space-md;
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-sm;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-primary-text); // Siempre negro sobre fondo amarillo
+      text-decoration: none;
+      border: 2px solid transparent;
+      transition: border-color $transition-fast, background $transition-fast,
+        box-shadow $transition-fast, transform $transition-fast;
+
+      &:hover {
+        border-color: var(--color-primary-text);
+        background: rgba(0, 0, 0, 0.08);
+        box-shadow: 3px 3px 0 var(--color-primary-text);
+        transform: translate(-1px, -1px);
+      }
+
+      &.active {
+        background: var(--color-accent);
+        color: $black;
+        border-color: var(--color-primary-text);
+        box-shadow: 3px 3px 0 var(--color-primary-text);
+      }
+
+      @include navbar-collapse {
+        .is-open & {
+          font-size: $text-lg;
+          padding: $space-sm $space-md;
           width: 100%;
         }
       }
+    }
+  }
+
+  // ── DERECHA: TEMA + AUTH ──────────────────────────
+
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    flex-shrink: 0;
+
+    @include navbar-collapse {
+      .is-open & {
+        width: 100%;
+        padding-top: $space-lg;
+        border-top: 2px solid rgba(0, 0, 0, 0.15);
+        flex-wrap: wrap;
+        gap: $space-sm;
+      }
+    }
+  }
+
+  // ── BOTÓN LUPA (buscar perfiles) ───────────────────
+
+  .btn-icon-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 2px solid var(--color-primary-text);
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+    cursor: pointer;
+    transition: transform $transition-fast, box-shadow $transition-fast,
+      border-bottom-width $transition-fast;
+    flex-shrink: 0;
+    text-decoration: none;
+
+    &:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--color-primary-text);
+    }
+
+    &:active {
+      transform: translate(2px, 2px);
+      border-bottom-width: 2px;
+      border-right-width: 2px;
+    }
+
+    &.active {
+      background: var(--color-accent);
+    }
+
+    svg {
+      display: block;
+      flex-shrink: 0;
+    }
+  }
+
+  // ── DROPDOWN MI PERFIL ─────────────────────────────
+
+  .user-dropdown {
+    position: relative;
+
+    // Trigger — el botón avatar+nombre
+    &__trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: $space-sm;
+      padding: $space-xs $space-sm;
+      background: transparent;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-family: $font-display;
+      transition: border-color $transition-fast, box-shadow $transition-fast,
+        transform $transition-fast;
+
+      &:hover {
+        border-color: var(--color-primary-text);
+        box-shadow: 3px 3px 0 var(--color-primary-text);
+      }
+    }
+
+    // Trigger activo cuando alguna subruta está activa
+    &.route-active .user-dropdown__trigger {
+      border-color: var(--color-primary-text);
+      box-shadow: 3px 3px 0 var(--color-primary-text);
+    }
+
+    &__chevron {
+      font-size: 0.7rem;
+      color: var(--color-primary-text);
+      transition: transform $transition-fast;
+      line-height: 1;
+    }
+
+    // Rotar chevron cuando el menú está abierto
+    // Usa clase explícita para evitar el doble-& cuando está anidado en .navbar
+    &.is-open .user-dropdown__chevron {
+      transform: rotate(180deg);
+    }
+
+    // Panel desplegable
+    &__panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 220px;
+      background: var(--color-surface);
+      border: 2px solid var(--color-primary-text);
+      box-shadow: 6px 6px 0 var(--color-primary-text);
+      z-index: $z-dropdown;
+
+      // Oculto por defecto
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: opacity $transition-fast, transform $transition-fast;
+    }
+
+    // Mostrar panel cuando el dropdown está abierto
+    &.is-open .user-dropdown__panel {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    // Cabecera del panel
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      padding: $space-md;
+      background: var(--color-primary);
+    }
+
+    &__avatar-lg {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--color-primary-text);
+      object-fit: cover;
+      border-radius: 0;
+      flex-shrink: 0;
+    }
+
+    &__display-name {
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-sm;
+      color: var(--color-primary-text);
+      margin: 0;
+      line-height: 1.2;
+
+      // Variante botón — ver perfil propio
+      &--link {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        transition: opacity $transition-fast;
+
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+    }
+
+    &__username {
+      font-family: $font-display;
+      font-size: $text-xs;
+      color: var(--color-primary-text);
+      opacity: 0.65;
+      margin: 0;
+      margin-top: 2px;
+    }
+
+    &__divider {
+      height: 2px;
+      background: var(--color-primary-text);
+      opacity: 0.12;
+    }
+
+    // Navegación interna del panel
+    &__nav {
+      display: flex;
+      flex-direction: column;
+      padding: $space-xs 0;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      padding: $space-sm $space-md;
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-sm;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background $transition-fast, border-color $transition-fast,
+        color $transition-fast;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.06);
+        border-left-color: var(--color-primary-text);
+        color: var(--color-primary-text);
+      }
+
+      &.active {
+        background: var(--color-primary);
+        border-left-color: var(--color-accent);
+        color: var(--color-primary-text);
+      }
+    }
+
+    &__item-icon {
+      font-size: 0.9rem;
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    // Botón salir al fondo del panel
+    &__logout {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      width: 100%;
+      padding: $space-sm $space-md;
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-sm;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: $danger;
+      background: transparent;
+      border: none;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+      transition: background $transition-fast, border-color $transition-fast;
+      text-align: left;
+
+      &:hover {
+        background: rgba(255, 59, 59, 0.08);
+        border-left-color: $danger;
+      }
+    }
+
+    // ── Modo hamburguesa: panel inline en el menú ──────
+    @include navbar-collapse {
+      position: static;
+      width: 100%;
+
+      &__trigger {
+        width: 100%;
+        border-color: var(--color-primary-text);
+      }
+
+      &__panel {
+        position: static;
+        box-shadow: 4px 4px 0 var(--color-primary-text);
+        transform: none;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: opacity $transition-normal, max-height $transition-normal;
+        pointer-events: none;
+      }
+
+      // Mismo fix: clase explícita en vez de &__panel
+      &.is-open .user-dropdown__panel {
+        opacity: 1;
+        max-height: 600px;
+        pointer-events: auto;
+      }
+    }
+  }
+
+  // ── BOTÓN CAMBIO DE TEMA ──────────────────────────────────
+  // Sobreescribimos el .theme-toggle de _commons.scss con tamaño
+  // más grande y etiqueta de texto visible en desktop
+
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xs;
+    // Cuadrado como los demás botones de auth
+    padding: $space-xs $space-sm;
+    min-width: 36px;
+    min-height: 36px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 2px solid var(--color-primary-text); // Siempre negro
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+    font-family: $font-display;
+    font-weight: $fw-bold;
+    font-size: $text-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: transform $transition-fast, box-shadow $transition-fast,
+      border-bottom-width $transition-fast, background $transition-normal;
+    user-select: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--color-primary-text);
+    }
+
+    &:active {
+      transform: translate(2px, 2px);
+      border-bottom-width: 2px;
+      border-right-width: 2px;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .theme-toggle__icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .theme-toggle__label {
+      @include navbar-collapse {
+        display: none;
+      }
+
+      // Volver a mostrar el label cuando el menú está abierto (panel hamburguesa)
+      .is-open & {
+        display: inline !important;
+      }
+    }
+  }
+
+  // ── AUTH ──────────────────────────────────────────────────
+
+  .navbar-auth {
+    flex-shrink: 0;
+  }
+
+  .auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+
+    // Botones de auth en navbar — mismo estilo key-button cuadrado
+    .btn {
+      // Reseta el tamaño para que sea cuadrado y consistente
+      padding: $space-xs $space-md;
+      min-height: 36px;
+      border-bottom-width: 4px;
+      border-right-width: 4px;
+      font-size: $text-xs;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--color-primary-text);
+      border-color: var(--color-primary-text);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 var(--color-primary-text);
+      }
+    }
+
+    .btn-primary {
+      background: var(--color-primary-text); // Siempre negro
+      color: var(--color-primary); // Siempre amarillo
+      border-color: var(--color-primary-text);
+
+      &:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    @include navbar-collapse {
+      .is-open & {
+        flex-direction: column;
+        width: 100%;
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  .user-section {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  .user-profile-link {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    text-decoration: none;
+    padding: $space-xs $space-sm;
+    border: 2px solid transparent;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+      border-color: var(--color-primary-text);
+      box-shadow: 3px 3px 0 var(--color-primary-text);
+    }
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--color-primary-text);
+    object-fit: cover;
+    border-radius: 0;
+  }
+
+  .user-name {
+    font-weight: $fw-bold;
+    font-size: $text-sm;
+    color: var(--color-primary-text);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    max-width: 100px;
+    @include truncate;
+  }
+
+  // Botón "Salir"
+  .btn-inverse {
+    padding: $space-xs $space-md;
+    min-height: 36px;
+    font-size: $text-xs;
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+    background: var(--color-primary-text) !important; // Siempre negro
+    color: var(--color-primary) !important; // Siempre amarillo
+    border-color: var(--color-primary-text) !important;
+  }
+
+  // ── HAMBURGER TOGGLE ──────────────────────────────────────
+
+  .navbar-toggle {
+    display: none;
+    background: none;
+    border: 2px solid var(--color-primary-text); // Siempre negro
+    padding: $space-xs $space-sm;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    transition: box-shadow $transition-fast;
+
+    &:hover {
+      box-shadow: 3px 3px 0 var(--color-primary-text);
+    }
+
+    span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--color-primary-text);
+      transition: transform $transition-fast, opacity $transition-fast;
+    }
+
+    &.is-open {
+      span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+      }
+
+      span:nth-child(2) {
+        opacity: 0;
+      }
+
+      span:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -4px);
+      }
+    }
+
+    @include navbar-collapse {
+      display: flex;
     }
   }
 }

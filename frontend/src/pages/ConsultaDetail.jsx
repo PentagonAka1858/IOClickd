@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/Consultas.scss';
 
 export const ConsultaDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [consulta, setConsulta] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -102,111 +103,100 @@ export const ConsultaDetail = () => {
 
   return (
     <div className="consulta-detail-page">
-      <div className="detail-toolbar">
-        <Link to="/consultas" className="back-link">
-          ← Volver a consultas
-        </Link>
-      </div>
+      <button className="btn-back" onClick={() => navigate(-1)} aria-label="Volver atrás" style={{ marginBottom: '1.5rem' }}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Volver
+      </button>
 
       {loading ? (
-        <div className="empty-state">
-          <p>Cargando consulta...</p>
-        </div>
+        <div className="loading-container"><div className="spinner" /><span>Cargando…</span></div>
       ) : error ? (
         <div className="alert alert-danger">{error}</div>
       ) : !consulta ? (
-        <div className="empty-state">
-          <h3>Consulta no encontrada</h3>
-        </div>
+        <div className="empty-state"><h3>Consulta no encontrada</h3></div>
       ) : (
         <>
-          <header className="page-header">
-            <h1>Consulta #{consulta.id}</h1>
-            <p>Estado: <span className={`status-pill ${consulta.estado.toLowerCase()}`}>{consulta.estado}</span></p>
-          </header>
-
-          <div className="consulta-summary-card">
+          <header className="page-header header-row">
             <div>
-              <p><strong>Cliente:</strong> {consulta.cliente?.nombre || 'Desconocido'}</p>
-              <p><strong>Soporte:</strong> {consulta.soporte?.nombre || 'Pendiente'}</p>
-              <p><strong>Creada:</strong> {formatFecha(consulta.fecha_creacion || consulta.created_at)}</p>
+              <h1>Consulta #{consulta.id}</h1>
+              <p className="page-subtitle">
+                Cliente: {consulta.cliente?.nombre || 'Desconocido'} —
+                Soporte: {consulta.soporte?.nombre || 'Pendiente'} —
+                {formatFecha(consulta.fecha_creacion || consulta.created_at)}
+              </p>
             </div>
-
-            <div className="consulta-actions">
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span className={`badge badge-${consulta.estado === 'ABIERTA' ? 'success' : consulta.estado === 'PENDIENTE' ? 'warning' : 'muted'}`}>
+                {consulta.estado}
+              </span>
               {canReply && (
-                <button
-                  className="btn btn-outline"
-                  onClick={handleCloseConsulta}
-                  disabled={closeLoading}
-                >
-                  {closeLoading ? 'Cerrando...' : 'Cerrar consulta'}
+                <button className="btn btn-sm btn-outline" onClick={handleCloseConsulta} disabled={closeLoading}>
+                  {closeLoading ? 'Cerrando…' : 'Cerrar consulta'}
                 </button>
               )}
-              {closeError && <div className="alert alert-danger">{closeError}</div>}
             </div>
-          </div>
+          </header>
 
-          <section className="mensajes-section">
-            <h2>Mensajes</h2>
+          {closeError && <div className="alert alert-danger mb-md">{closeError}</div>}
 
+          {/* Messages */}
+          <section style={{ marginBottom: '2rem' }}>
+            <h2 style={{ marginBottom: '1rem', fontWeight: 900 }}>Mensajes</h2>
             {consulta.mensajes?.length > 0 ? (
-              <div className="mensajes-list">
+              <div className="messages">
                 {consulta.mensajes
                   .slice()
                   .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-                  .map((mensaje) => (
-                    <article key={mensaje.id} className="mensaje-item">
-                      <div className="mensaje-header">
-                        <div>
-                          <span className="mensaje-author">{mensaje.emisor?.nombre || 'Usuario'}</span>
-                          <span className="mensaje-role">
-                            {mensaje.emisor?.id === consulta.cliente_id ? 'Cliente' : 'Soporte'}
-                          </span>
-                        </div>
-                        <span className="mensaje-date">{formatFecha(mensaje.created_at)}</span>
-                      </div>
-                      <p>{mensaje.contenido}</p>
-                    </article>
-                  ))}
+                  .map((mensaje) => {
+                    const isClient = mensaje.emisor?.id === consulta.cliente_id;
+                    return (
+                      <article key={mensaje.id} className={`message-bubble ${isClient ? 'from-me' : 'from-support'}`}>
+                        <p className="message-author">
+                          {mensaje.emisor?.nombre || 'Usuario'} — {isClient ? 'Cliente' : 'Soporte'}
+                        </p>
+                        <p className="message-text">{mensaje.contenido}</p>
+                        <p className="message-time">{formatFecha(mensaje.created_at)}</p>
+                      </article>
+                    );
+                  })}
               </div>
             ) : (
               <div className="empty-state">
-                <p>No hay mensajes en esta consulta todavía.</p>
+                <span className="empty-icon">💬</span>
+                <p>No hay mensajes aún.</p>
               </div>
             )}
           </section>
 
-          <section className="reply-section">
-            <h2>Enviar respuesta</h2>
-            <p>
-              {isSupportUser
-                ? 'Como admin o moderador, tu respuesta ayudará a resolver esta consulta. Si aún no está asignada, responderla te asignará automáticamente.'
-                : 'Puedes responder para añadir más información o aclarar tu consulta.'}
-            </p>
-
-            {consulta.estado === 'CERRADA' ? (
-              <div className="alert alert-info">Esta consulta está cerrada y no puede recibir nuevos mensajes.</div>
-            ) : (
-              <form onSubmit={handleSendMessage}>
-                {submitError && <div className="alert alert-danger">{submitError}</div>}
-                {submitSuccess && <div className="alert alert-success">{submitSuccess}</div>}
-
-                <label htmlFor="reply-content">Mensaje</label>
-                <textarea
-                  id="reply-content"
-                  rows="5"
-                  value={contenido}
-                  onChange={(e) => setContenido(e.target.value)}
-                  placeholder="Escribe tu respuesta aquí..."
-                  disabled={submitLoading}
-                />
-
-                <button type="submit" className="btn btn-primary" disabled={submitLoading}>
-                  {submitLoading ? 'Enviando mensaje...' : 'Enviar mensaje'}
+          {/* Reply form */}
+          {consulta.estado === 'CERRADA' ? (
+            <div className="alert alert-info">Esta consulta está cerrada.</div>
+          ) : (
+            <div className="reply-form">
+              <h2 style={{ marginBottom: '0.75rem', fontSize: '1.25rem', fontWeight: 900 }}>Enviar respuesta</h2>
+              {submitError && <div className="alert alert-danger mb-md">{submitError}</div>}
+              {submitSuccess && <div className="alert alert-success mb-md">{submitSuccess}</div>}
+              <form onSubmit={handleSendMessage} style={{ display: 'grid', gap: '0.75rem' }}>
+                <div className="form-group">
+                  <label htmlFor="reply-content">Mensaje</label>
+                  <textarea
+                    id="reply-content"
+                    rows="4"
+                    value={contenido}
+                    onChange={(e) => setContenido(e.target.value)}
+                    placeholder="Escribe tu respuesta aquí…"
+                    disabled={submitLoading}
+                  />
+                </div>
+                <button type="submit" className={`btn btn-primary${submitLoading ? ' btn-loading' : ''}`} disabled={submitLoading}>
+                  {submitLoading ? 'Enviando…' : 'Enviar mensaje'}
                 </button>
               </form>
-            )}
-          </section>
+            </div>
+          )}
         </>
       )}
     </div>

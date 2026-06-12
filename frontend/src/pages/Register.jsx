@@ -13,63 +13,58 @@ export const Register = () => {
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
   const { register } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
     if (password !== passwordConfirmation) {
       setError('Las contraseñas no coinciden');
-      setLoading(false);
       return;
     }
 
+    setLoading(true);
     try {
       const result = await register(nombre, email, password, passwordConfirmation);
-
       if (result.success) {
-        setRegisterSuccess(true);
         setRegisteredEmail(email);
-        // Clear form
-        setNombre('');
-        setEmail('');
-        setPassword('');
-        setPasswordConfirmation('');
+        setRegisterSuccess(true);
       } else {
         setError(result.message || 'Error al registrarse');
       }
-    } catch (err) {
+    } catch {
       setError('Error al registrarse');
     } finally {
       setLoading(false);
     }
   };
 
-  // Success message state
   if (registerSuccess) {
     return (
       <div className="auth-container">
         <div className="auth-card">
-          <div className="register-success">
-            <div className="success-icon">✓</div>
-            <h2>¡Cuenta creada exitosamente!</h2>
-            <p>Hemos enviado un email de verificación a:</p>
-            <p className="success-email">{registeredEmail}</p>
-            <p className="verification-instructions">
-              Por favor, haz clic en el enlace de verificación en tu email para completar el registro.
-              El enlace expirará en 24 horas.
-            </p>
-            <div className="verification-info">
-              <p className="small">¿No recibiste el email?</p>
-              <Link to="/resend-verification" className="btn btn-secondary btn-block">
-                Reenviar Email de Verificación
-              </Link>
+          <div className="auth-card-header">
+            <h1>¡Cuenta creada!</h1>
+            <p className="auth-subtitle">Revisa tu bandeja de entrada</p>
+          </div>
+          <div className="auth-card-body">
+            <div className="register-success">
+              <div className="success-icon">✓</div>
+              <h2>¡Registro exitoso!</h2>
+              <p>Hemos enviado un email de verificación a:</p>
+              <span className="success-email">{registeredEmail}</span>
+              <p className="verification-instructions">
+                Haz clic en el enlace de tu email para activar la cuenta. El enlace caduca en 24 horas.
+              </p>
+              <div className="verification-actions">
+                <Link to="/resend-verification" className="btn btn-secondary">
+                  Reenviar email
+                </Link>
+                <Link to="/login" className="btn btn-outline">
+                  Ir a Iniciar Sesión
+                </Link>
+              </div>
             </div>
-            <Link to="/login" className="btn btn-outline btn-block">
-              Ir a Iniciar Sesión
-            </Link>
           </div>
         </div>
       </div>
@@ -79,64 +74,76 @@ export const Register = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Crear Cuenta</h1>
-        <p className="auth-subtitle">Regístrate y empieza a usar la aplicación</p>
+        <div className="auth-card-header">
+          <h1>Crear Cuenta</h1>
+          <p className="auth-subtitle">Regístrate y empieza a gestionar tus periféricos</p>
+        </div>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        <div className="auth-card-body">
+          {error && <div className="alert alert-danger">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="nombre">Nombre completo</label>
-            <input
-              type="text"
-              id="nombre"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              placeholder="Tu nombre"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="nombre">Nombre completo</label>
+              <input
+                type="text"
+                id="nombre"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                placeholder="Tu nombre"
+                required
+                autoComplete="name"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Correo Electrónico</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@email.com"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="email">Correo Electrónico</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@email.com"
+                required
+                autoComplete="email"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="password">Contraseña</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="new-password"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="passwordConfirmation">Confirmar contraseña</label>
-            <input
-              type="password"
-              id="passwordConfirmation"
-              value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="passwordConfirmation">Confirmar contraseña</label>
+              <input
+                type="password"
+                id="passwordConfirmation"
+                value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="new-password"
+              />
+            </div>
 
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? 'Cargando...' : 'Registrarse'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className={`btn btn-primary btn-block${loading ? ' btn-loading' : ''}`}
+              disabled={loading}
+            >
+              {loading ? 'Creando cuenta…' : 'Registrarse'}
+            </button>
+          </form>
+        </div>
 
         <div className="auth-footer">
           <p>

@@ -1,123 +1,267 @@
-@use './variables' as *;
+// ============================================================
+// Home.scss — Neobrutalist Home Page
+// ============================================================
+@use './partials/variables' as *;
+@use './partials/mixins' as *;
 
 .home {
-  .hero {
-    text-align: center;
-    margin-bottom: 4rem;
-    padding: 3rem 0;
-    background: linear-gradient(135deg, $bg-light 0%, $bg-white 100%);
-    border-radius: $border-radius;
+  animation: fadeIn 0.4s ease;
+}
 
-    h1 {
-      font-size: 3rem;
-      margin: 0 0 1rem 0;
-      color: $text-color;
-      background: linear-gradient(135deg, $primary-color, $info-color);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+// --- Hero ---
+.hero {
+  background: var(--color-primary);
+  border-bottom: $border-thick;
+  padding: $space-3xl $space-md $space-2xl;
+  position: relative;
+  overflow: hidden;
+
+  @include md {
+    padding: $space-3xl $space-xl;
+  }
+
+  // Decorative grid background
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--color-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    @include container;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    background: $black;
+    color: $yellow;
+    font-size: $text-xs;
+    font-weight: $fw-black;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 4px $space-md;
+    margin-bottom: $space-lg;
+    border: 1px solid $black;
+  }
+
+  h1 {
+    font-size: $text-5xl;
+    font-weight: $fw-black;
+    color: $black;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 700px;
+    margin-bottom: $space-md;
+
+    @include md {
+      font-size: $text-6xl;
     }
 
-    > p {
-      font-size: 1.2rem;
-      color: $secondary-color;
-      margin: 0 0 2rem 0;
+    em {
+      font-style: normal;
+      text-decoration: underline;
+      text-decoration-thickness: 4px;
+      text-underline-offset: 6px;
     }
   }
 
-  .welcome-message,
+  .hero-desc {
+    font-size: $text-lg;
+    color: rgba(18, 19, 20, 0.75);
+    max-width: 480px;
+    margin-bottom: $space-xl;
+    font-weight: $fw-medium;
+    line-height: 1.5;
+  }
+
+  .welcome-message {
+    h2 {
+      font-size: $text-3xl;
+      font-weight: $fw-black;
+      color: $black;
+      margin-bottom: $space-lg;
+    }
+  }
+
+  .quick-links,
   .cta {
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
-      color: $text-color;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
+    align-items: center;
+
+    .btn.btn-outline.btn-lg {
+      background: var(--color-surface-alt);
     }
 
-    .quick-links,
-    .btn-group {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-
-      .btn {
-        min-width: 150px;
+    .btn.btn-primary.btn-lg {
+      &:hover {
+        box-shadow: 4px 4px 0 #{$black};
       }
     }
-  }
 
-  .features {
-    h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 3rem;
-      color: $text-color;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-
-      .feature-card {
-        padding: 2rem;
-        background-color: $bg-white;
-        border: 1px solid $border-color;
-        border-radius: $border-radius;
-        box-shadow: $shadow-sm;
-        transition: $transition;
-        text-align: center;
-
-        &:hover {
-          box-shadow: $shadow-lg;
-          transform: translateY(-5px);
-        }
-
-        h3 {
-          font-size: 1.3rem;
-          margin: 0 0 1rem 0;
-          color: $primary-color;
-        }
-
-        p {
-          color: $secondary-color;
-          margin: 0;
-          line-height: 1.6;
-        }
-      }
+    p {
+      width: 100%;
+      margin-bottom: $space-sm;
+      color: rgba(18, 19, 20, 0.7);
+      font-weight: $fw-medium;
     }
   }
 }
 
-@media (max-width: 768px) {
-  .home {
-    .hero {
-      padding: 2rem 1rem;
+// --- How it works (keyboard key explainer) ---
+.how-it-works {
+  @include container;
+  padding: $space-3xl $space-md;
 
-      h1 {
-        font-size: 2rem;
-      }
+  .section-title {
+    font-size: $text-4xl;
+    font-weight: $fw-black;
+    margin-bottom: $space-2xl;
+    text-align: center;
 
-      p {
-        font-size: 1rem;
-      }
+    span {
+      background: var(--color-primary);
+      padding: 0 $space-sm;
+      border: $border-width solid var(--color-border);
+    }
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $space-lg;
+
+    @include md {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .step {
+    background: var(--color-surface);
+    border: $border-width solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    padding: $space-xl $space-lg;
+    position: relative;
+    transition: transform $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-xl);
     }
 
-    .welcome-message,
-    .cta {
-      .quick-links,
-      .btn-group {
-        flex-direction: column;
-
-        .btn {
-          width: 100%;
-        }
-      }
+    // Step number as keyboard cap
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--color-primary);
+      color: $black;
+      font-size: $text-2xl;
+      font-weight: $fw-black;
+      border: $border-width solid $black;
+      border-bottom-width: 4px;
+      border-right-width: 4px;
+      margin-bottom: $space-md;
+      font-family: $font-mono;
     }
 
-    .features {
-      .features-grid {
-        grid-template-columns: 1fr;
+    h3 {
+      font-size: $text-xl;
+      font-weight: $fw-black;
+      margin-bottom: $space-sm;
+    }
+
+    p {
+      color: var(--color-text-muted);
+      font-size: $text-sm;
+      line-height: 1.6;
+    }
+  }
+}
+
+// --- Features grid ---
+.features {
+  background: var(--color-surface-alt);
+  border-top: $border-width solid var(--color-border);
+  border-bottom: $border-width solid var(--color-border);
+  padding: $space-3xl $space-md;
+
+  @include md {
+    padding: $space-3xl $space-xl;
+  }
+
+  >h2 {
+    font-size: $text-4xl;
+    font-weight: $fw-black;
+    text-align: center;
+    margin-bottom: $space-2xl;
+    color: var(--color-text);
+  }
+
+  .features-grid {
+    @include container;
+    @include grid-auto-fill(260px, $space-lg);
+  }
+}
+
+// --- Keyboard shortcut legend (interactive) ---
+.keyboard-legend {
+  @include container;
+  padding: $space-2xl $space-md;
+
+  h2 {
+    font-size: $text-3xl;
+    font-weight: $fw-black;
+    margin-bottom: $space-xl;
+    text-align: center;
+  }
+
+  .keys-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-md;
+    justify-content: center;
+  }
+
+  .key-item {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: $text-sm;
+    font-weight: $fw-medium;
+    color: var(--color-text-muted);
+
+    .key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: $space-xs $space-md;
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: $border-width solid var(--color-border);
+      border-bottom-width: 4px;
+      border-right-width: 3px;
+      font-family: $font-mono;
+      font-size: $text-sm;
+      font-weight: $fw-bold;
+      min-width: 40px;
+      box-shadow: var(--shadow-sm);
+      cursor: default;
+      transition: transform $transition-fast, border-bottom-width $transition-fast;
+
+      &:hover {
+        animation: keyPress 0.2s ease;
       }
     }
   }

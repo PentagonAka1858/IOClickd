@@ -1,225 +1,187 @@
-@use './variables' as *;
-@use 'sass:color';
+// ============================================================
+// Auth.scss — Login, Register, Email Verification
+// ============================================================
+@use './partials/variables' as *;
+@use './partials/mixins' as *;
 
 .auth-container {
-  min-height: calc(100vh - 140px);
+  min-height: calc(100vh - #{$navbar-height});
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: $space-xl $space-md;
+  background: var(--color-bg);
 }
 
 .auth-card {
   width: 100%;
-  max-width: 460px;
-  background-color: $bg-white;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  box-shadow: $shadow-md;
-  padding: 2.5rem;
-  animation: fadeIn 0.4s ease;
+  max-width: 480px;
+  background: var(--color-surface);
+  border: $border-thick;
+  box-shadow: var(--shadow-xl);
+  animation: slideIn 0.3s ease;
 
-  h1 {
-    margin-bottom: 0.75rem;
-    font-size: 2rem;
-    color: $text-color;
+  // Header stripe
+  .auth-card-header {
+    background: var(--color-primary);
+    border-bottom: $border-width solid var(--color-border);
+    padding: $space-xl $space-xl $space-lg;
+
+    h1 {
+      font-size: $text-3xl;
+      font-weight: $fw-black;
+      color: $black;
+      margin-bottom: $space-xs;
+    }
+
+    .auth-subtitle {
+      color: rgba(18, 19, 20, 0.65);
+      font-size: $text-sm;
+      font-weight: $fw-medium;
+    }
   }
 
-  .auth-subtitle {
-    margin-bottom: 2rem;
-    color: $secondary-color;
+  .auth-card-body {
+    padding: $space-xl;
   }
 
   .alert {
-    padding: 1rem;
-    border-radius: $border-radius;
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
-
-    &.alert-danger {
-      background-color: color.adjust($danger-color, $lightness: 42%);
-      border: 1px solid color.adjust($danger-color, $lightness: 30%);
-      color: color.adjust($danger-color, $lightness: -10%);
-    }
+    margin-bottom: $space-lg;
   }
 
   .auth-form {
     display: grid;
-    gap: 1rem;
+    gap: $space-lg;
 
     .form-group {
       display: grid;
-      gap: 0.5rem;
+      gap: $space-xs;
 
       label {
-        font-weight: 600;
-        color: $text-color;
+        font-family: $font-display;
+        font-weight: $fw-black;
+        font-size: $text-xs;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text);
       }
 
       input {
-        width: 100%;
-        border: 1px solid $border-color;
-        border-radius: $border-radius;
-        padding: 0.95rem 1rem;
-        font-size: 1rem;
-        color: $text-color;
-        outline: none;
-        transition: border-color 0.2s ease;
-
-        &:focus {
-          border-color: $primary-color;
-          box-shadow: 0 0 0 4px rgba($primary-color, 0.12);
-        }
+        @include neo-input;
+        padding: $space-md;
       }
     }
 
     .btn-block {
       width: 100%;
+      justify-content: center;
+      padding: $space-md;
+      font-size: $text-base;
     }
   }
 
   .auth-footer {
-    margin-top: 1.5rem;
+    padding: $space-md $space-xl;
+    border-top: $border-width solid var(--color-border);
+    background: var(--color-surface-alt);
     text-align: center;
 
     p {
-      color: $secondary-color;
-      font-size: 0.95rem;
+      font-size: $text-sm;
+      color: var(--color-text-muted);
 
       a {
-        color: $primary-color;
-        font-weight: 600;
+        color: var(--color-text);
+        font-weight: $fw-black;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+
+        &:hover { color: var(--color-accent); }
       }
     }
   }
 }
 
-@media (max-width: 600px) {
-  .auth-card {
-    padding: 1.8rem;
-  }
-}
-
-/* Verification Success Styles */
+// --- Verification pages ---
 .register-success,
 .verification-success,
 .verification-error {
   text-align: center;
-  padding: 1rem 0;
 
   .success-icon,
   .error-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 1.5rem;
-    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto $space-lg;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    font-weight: bold;
+    font-weight: $fw-black;
+    border: $border-thick;
+    box-shadow: var(--shadow-md);
   }
 
   .success-icon {
-    background-color: color.adjust($success-color, $lightness: 42%);
-    color: color.adjust($success-color, $lightness: -10%);
+    background: var(--color-primary);
+    color: $black;
   }
 
   .error-icon {
-    background-color: color.adjust($danger-color, $lightness: 42%);
-    color: color.adjust($danger-color, $lightness: -10%);
+    background: var(--color-danger);
+    color: $white;
   }
 
   h2 {
-    margin-bottom: 1rem;
-    color: $text-color;
+    font-size: $text-2xl;
+    font-weight: $fw-black;
+    margin-bottom: $space-md;
   }
 
   p {
-    color: $secondary-color;
-    margin-bottom: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: $text-sm;
+    margin-bottom: $space-sm;
     line-height: 1.6;
-
-    &.success-email,
-    &.verified-email {
-      font-weight: 600;
-      color: $text-color;
-      background-color: $bg-light;
-      padding: 0.75rem;
-      border-radius: $border-radius;
-      margin: 1rem 0;
-    }
-
-    &.verification-text,
-    &.verification-instructions {
-      margin-bottom: 1.5rem;
-    }
-
-    &.error-message {
-      background-color: color.adjust($danger-color, $lightness: 42%);
-      border: 1px solid color.adjust($danger-color, $lightness: 30%);
-      color: color.adjust($danger-color, $lightness: -10%);
-      padding: 1rem;
-      border-radius: $border-radius;
-      margin-bottom: 1.5rem;
-    }
-
-    &.small {
-      font-size: 0.85rem;
-      margin-bottom: 0.75rem;
-    }
   }
 
-  .verification-info,
+  .success-email,
+  .verified-email {
+    font-weight: $fw-black;
+    color: var(--color-text);
+    background: var(--color-surface-alt);
+    padding: $space-sm $space-md;
+    border: $border-width solid var(--color-border);
+    font-family: $font-mono;
+    font-size: $text-sm;
+    margin: $space-md 0 !important;
+    display: block;
+  }
+
   .verification-actions {
-    margin: 1.5rem 0;
     display: grid;
-    gap: 1rem;
-  }
+    gap: $space-sm;
+    margin-top: $space-lg;
 
-  .btn {
-    width: 100%;
+    .btn { width: 100%; justify-content: center; }
   }
 }
 
-/* Loading Spinner */
+// --- Loading state ---
 .verification-loading {
   text-align: center;
-  padding: 2rem 0;
+  padding: $space-2xl 0;
 
   .spinner {
-    width: 50px;
-    height: 50px;
-    margin: 0 auto 1.5rem;
-    border: 4px solid $border-color;
-    border-top-color: $primary-color;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    margin: 0 auto $space-lg;
+    border-top-color: var(--color-primary);
   }
 
   h2 {
-    margin-bottom: 0.5rem;
-    color: $text-color;
+    font-size: $text-xl;
+    font-weight: $fw-black;
+    margin-bottom: $space-sm;
   }
 
-  p {
-    color: $secondary-color;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  p { color: var(--color-text-muted); font-size: $text-sm; }
 }

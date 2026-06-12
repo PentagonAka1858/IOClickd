@@ -1,0 +1,79 @@
+// ============================================================
+// _themes.scss — Light & Dark Theme via CSS Custom Properties
+// ============================================================
+@use 'variables' as *;
+
+// Light theme (default)
+:root,
+[data-theme="light"] {
+  --color-bg:           #{$white};
+  --color-bg-alt:       #e4e8e9;
+  --color-surface:      #ffffff;
+  --color-surface-alt:  #f8fbfc;
+  --color-border:       #{$black};
+  --color-text:         #{$black};
+  --color-text-muted:   #444647;
+  --color-text-inverse: #{$white};
+
+  --color-primary:      #{$yellow};
+  --color-primary-text: #{$black};   // text ON primary bg
+  --color-accent:       #{$cyan};
+  --color-accent-text:  #{$black};
+  --color-secondary:    #{$blue};
+  --color-secondary-text: #{$black};
+
+  --color-danger:       #{$danger};
+  --color-success:      #{$success};
+  --color-warning:      #{$warning};
+
+  --shadow-sm:          #{$shadow-sm};
+  --shadow-md:          #{$shadow-md};
+  --shadow-lg:          #{$shadow-lg};
+  --shadow-xl:          #{$shadow-xl};
+
+  --input-bg:           #ffffff;
+  --input-color:        #{$black};
+  --input-placeholder:  #6b7274;
+  --input-border:       #{$black};
+  --input-focus-shadow: 4px 4px 0 #{$yellow};
+
+  --btn-hover-translate: -2px;
+  --btn-hover-shadow:    #{$shadow-xl};
+}
+
+// Dark theme
+[data-theme="dark"] {
+  --color-bg:           #{$black};
+  --color-bg-alt:       #1e2022;
+  --color-surface:      #1e2022;
+  --color-surface-alt:  #252829;
+  --color-border:       #{$white};
+  --color-text:         #{$white};
+  --color-text-muted:   #b0b8bb;
+  --color-text-inverse: #{$black};
+
+  --color-primary:      #{$green};
+  --color-primary-text: #{$black};
+  --color-accent:       #{$cyan};
+  --color-accent-text:  #{$black};
+  --color-secondary:    #{$blue};
+  --color-secondary-text: #{$black};
+
+  --color-danger:       #ff5f5f;
+  --color-success:      #00e56b;
+  --color-warning:      #ffaa33;
+
+  --shadow-sm:          3px 3px 0 #{$white};
+  --shadow-md:          4px 4px 0 #{$white};
+  --shadow-lg:          6px 6px 0 #{$white};
+  --shadow-xl:          8px 8px 0 #{$white};
+
+  --input-bg:           #252829;
+  --input-color:        #{$white};
+  --input-placeholder:  #7a8285;
+  --input-border:       #{$white};
+  --input-focus-shadow: 4px 4px 0 #{$cyan};
+
+  --btn-hover-translate: -2px;
+  --btn-hover-shadow:    8px 8px 0 #{$white};
+}

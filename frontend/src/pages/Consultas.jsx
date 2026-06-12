@@ -76,65 +76,63 @@ export const Consultas = () => {
     <div className="consultas-page">
       <header className="page-header">
         <h1>Consultas y Soporte</h1>
-        <p>Envía tus dudas al equipo de soporte y revisa el estado de tus consultas.</p>
+        <p className="page-subtitle">Envía dudas al equipo de soporte y revisa tus consultas.</p>
       </header>
 
-      <section className="consulta-card new-consulta-card">
-        <div className="card-heading">
-          <h2>Crear nueva consulta</h2>
-          <p>Describe tu problema o pregunta con el mayor detalle posible.</p>
-        </div>
-
-        {submitError && <div className="alert alert-danger">{submitError}</div>}
-        {submitSuccess && <div className="alert alert-success">{submitSuccess}</div>}
-
-        <form onSubmit={handleSubmitConsulta}>
-          <label htmlFor="consulta-contenido">Contenido de la consulta</label>
-          <textarea
-            id="consulta-contenido"
-            rows="5"
-            value={contenido}
-            onChange={(e) => setContenido(e.target.value)}
-            placeholder="Escribe aquí tu consulta..."
-            disabled={submitLoading}
-          />
-
-          <button type="submit" className="btn btn-primary" disabled={submitLoading}>
-            {submitLoading ? 'Enviando consulta...' : 'Enviar consulta'}
+      {/* New consulta form */}
+      <section className="card mb-xl">
+        <h2 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Nueva consulta</h2>
+        {submitError && <div className="alert alert-danger mb-md">{submitError}</div>}
+        {submitSuccess && <div className="alert alert-success mb-md">{submitSuccess}</div>}
+        <form onSubmit={handleSubmitConsulta} style={{ display: 'grid', gap: '0.75rem' }}>
+          <div className="form-group">
+            <label htmlFor="consulta-contenido">Describe tu problema o pregunta</label>
+            <textarea
+              id="consulta-contenido"
+              rows="5"
+              value={contenido}
+              onChange={(e) => setContenido(e.target.value)}
+              placeholder="Escribe aquí tu consulta con el mayor detalle posible…"
+              disabled={submitLoading}
+            />
+          </div>
+          <button type="submit" className={`btn btn-primary${submitLoading ? ' btn-loading' : ''}`} disabled={submitLoading}>
+            {submitLoading ? 'Enviando…' : 'Enviar consulta'}
           </button>
         </form>
       </section>
 
-      <section className="consultas-list-section">
-        <h2>Mis consultas</h2>
-
+      {/* Consultas list */}
+      <section>
+        <h2 style={{ marginBottom: '1.5rem', fontWeight: 900 }}>Mis consultas</h2>
         {loading ? (
-          <div className="empty-state">
-            <p>Cargando consultas...</p>
-          </div>
+          <div className="loading-container"><div className="spinner" /><span>Cargando…</span></div>
         ) : error ? (
           <div className="alert alert-danger">{error}</div>
         ) : consultas.length === 0 ? (
           <div className="empty-state">
-            <h3>No hay consultas</h3>
-            <p>Aún no has creado ninguna consulta. Usa el formulario para enviar tu primera pregunta.</p>
+            <h3>Sin consultas</h3>
+            <p>Usa el formulario para enviar tu primera consulta al equipo de soporte.</p>
           </div>
         ) : (
-          <div className="consultas-grid">
+          <div className="consultas-list">
             {consultas.map((consulta) => (
-              <Link key={consulta.id} to={`/consultas/${consulta.id}`} className="consulta-item consulta-link">
-                <div className="consulta-header">
-                  <div>
-                    <span className={`consulta-status ${consulta.estado.toLowerCase()}`}>{consulta.estado}</span>
-                    <h3>Consulta #{consulta.id}</h3>
-                  </div>
-                  <span className="consulta-date">{formatFecha(consulta.fecha_creacion || consulta.created_at)}</span>
-                </div>
-                <p className="consulta-content">{consulta.mensajes?.length > 0 ? consulta.mensajes[0].contenido : 'Sin contenido disponible.'}</p>
+              <Link
+                key={consulta.id}
+                to={`/consultas/${consulta.id}`}
+                className={`consulta-card status-${consulta.estado?.toLowerCase()}`}
+              >
                 <div className="consulta-meta">
-                  <span>{consulta.soporte?.nombre ? `Soporte: ${consulta.soporte.nombre}` : 'Soporte: Pendiente'}</span>
-                  <span>{consulta.mensajes ? `${consulta.mensajes.length} mensaje(s)` : '0 mensajes'}</span>
+                  <span className={`badge badge-${consulta.estado === 'ABIERTA' ? 'success' : consulta.estado === 'PENDIENTE' ? 'warning' : 'muted'}`}>
+                    {consulta.estado}
+                  </span>
+                  <span className="text-muted text-sm">#{consulta.id}</span>
+                  <span className="text-muted text-sm">{formatFecha(consulta.fecha_creacion || consulta.created_at)}</span>
                 </div>
+                <h3 className="consulta-title">Consulta #{consulta.id}</h3>
+                <p className="consulta-preview">
+                  {consulta.mensajes?.length > 0 ? consulta.mensajes[0].contenido : 'Sin contenido disponible.'}
+                </p>
               </Link>
             ))}
           </div>

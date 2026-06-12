@@ -1,1 +1,14 @@
-/* Estilos globales movidos a App.scss */
+// ============================================================
+// App.scss — Punto de entrada global de estilos
+// Importa los partials base: variables, temas, reset, botones, etc.
+// ============================================================
+@use './styles/partials/variables' as *;
+@use './styles/partials/mixins' as *;
+@use './styles/partials/themes';
+@use './styles/partials/base';
+@use './styles/partials/buttons';
+@use './styles/partials/cards';
+@use './styles/partials/forms';
+@use './styles/partials/navbar';
+@use './styles/partials/commons';
+@use './styles/partials/layout';

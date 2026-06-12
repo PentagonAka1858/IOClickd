@@ -1,0 +1,248 @@
+// ============================================================
+// _cards.scss — Neobrutalist Card Components
+// ============================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// --- Base card ---
+.card {
+  @include neo-card;
+  padding: $space-lg;
+  background: var(--color-surface);
+  border-radius: $radius-sm;
+
+  &.card-highlight {
+    border-left: 4px solid var(--color-primary);
+  }
+
+  &.card-accent {
+    border-left: 4px solid var(--color-accent);
+  }
+}
+
+// --- Product card ---
+.product-card {
+  background: var(--color-surface);
+  border: $border-width solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  transition: transform $transition-fast, box-shadow $transition-fast;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--color-text);
+
+  &:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-image {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--color-bg-alt);
+    border-bottom: $border-width solid var(--color-border);
+    position: relative;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.04);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: $space-sm;
+      left: $space-sm;
+      background: var(--color-primary);
+      color: $black;
+      border: 1px solid $black;
+      font-size: $text-xs;
+      font-weight: $fw-black;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px $space-sm;
+    }
+  }
+
+  .card-body {
+    padding: $space-md;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  .card-category {
+    font-size: $text-xs;
+    font-weight: $fw-black;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+  }
+
+  .card-title {
+    font-size: $text-lg;
+    font-weight: $fw-black;
+    color: var(--color-text);
+    line-height: 1.2;
+    @include truncate(2);
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: $text-sm;
+    color: var(--color-text-muted);
+    margin-top: auto;
+  }
+
+  .card-price {
+    font-size: $text-2xl;
+    font-weight: $fw-black;
+    color: var(--color-text);
+  }
+
+  .card-footer {
+    padding: $space-sm $space-md;
+    border-top: $border-width solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    background: var(--color-surface-alt);
+  }
+}
+
+// --- Feature card (home page) ---
+.feature-card {
+  background: var(--color-surface);
+  border: $border-width solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  padding: $space-xl $space-lg;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+  position: relative;
+
+  &:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-xl);
+  }
+
+  // Alternating accent accent bars
+  &:nth-child(1) {
+    border-top: 4px solid var(--color-primary);
+  }
+
+  &:nth-child(2) {
+    border-top: 4px solid var(--color-accent);
+  }
+
+  &:nth-child(3) {
+    border-top: 4px solid var(--color-secondary);
+  }
+
+  &:nth-child(4) {
+    border-top: 4px solid var(--color-primary);
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: $space-md;
+    display: block;
+  }
+
+  h3 {
+    font-size: $text-xl;
+    font-weight: $fw-black;
+    margin-bottom: $space-sm;
+    color: var(--color-text);
+  }
+
+  p {
+    color: var(--color-text-muted);
+    font-size: $text-sm;
+    line-height: 1.6;
+  }
+}
+
+// --- Stat card (admin, profile) ---
+.stat-card {
+  background: var(--color-surface);
+  border: $border-width solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  padding: $space-lg;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .stat-label {
+    font-size: $text-xs;
+    font-weight: $fw-black;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: $space-sm;
+  }
+
+  .stat-value {
+    font-size: $text-4xl;
+    font-weight: $fw-black;
+    color: var(--color-text);
+    line-height: 1;
+  }
+
+  .stat-change {
+    font-size: $text-sm;
+    font-weight: $fw-bold;
+    margin-top: $space-xs;
+
+    &.up {
+      color: var(--color-success);
+    }
+
+    &.down {
+      color: var(--color-danger);
+    }
+  }
+}
+
+// --- List item card (listas, inventory rows) ---
+.list-card {
+  background: var(--color-surface);
+  border: $border-width solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  padding: $space-md $space-lg;
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+  text-decoration: none;
+  color: var(--color-text);
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:nth-child(even) {
+    border-left-color: var(--color-accent);
+  }
+
+  &:nth-child(3n) {
+    border-left-color: var(--color-secondary);
+  }
+}

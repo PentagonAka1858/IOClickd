@@ -1,0 +1,168 @@
+// ============================================================
+// _layout.scss — Page Layout & Grid Utilities
+// ============================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// --- Main layout wrapper ---
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: $space-xl $space-md;
+
+  @include md {
+    padding: $space-xl $space-lg;
+  }
+}
+
+// --- Container ---
+.container {
+  @include container;
+}
+
+.container-sm  { @include container(768px); }
+.container-md  { @include container(1024px); }
+.container-lg  { @include container(1280px); }
+
+// --- Page header ---
+.page-header {
+  margin-bottom: $space-xl;
+
+  h1 {
+    font-size: $text-4xl;
+    font-weight: $fw-black;
+    line-height: 1.1;
+    color: var(--color-text);
+
+    @include md { font-size: $text-5xl; }
+  }
+
+  .page-subtitle {
+    color: var(--color-text-muted);
+    font-size: $text-lg;
+    margin-top: $space-sm;
+  }
+
+  &.header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-md;
+
+    @include mobile-only {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+}
+
+// --- Section ---
+.section {
+  padding: $space-2xl 0;
+
+  + .section {
+    border-top: $border-width solid var(--color-border);
+  }
+
+  .section-title {
+    font-size: $text-3xl;
+    font-weight: $fw-black;
+    margin-bottom: $space-xl;
+    color: var(--color-text);
+
+    // Accent underline
+    &::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--color-primary);
+      margin-top: $space-sm;
+      border: 1px solid var(--color-border);
+    }
+  }
+}
+
+// --- Auto-responsive grids ---
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+
+  @include md { grid-template-columns: repeat(2, 1fr); }
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+
+  @include md { grid-template-columns: repeat(2, 1fr); }
+  @include lg { grid-template-columns: repeat(3, 1fr); }
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+
+  @include sm { grid-template-columns: repeat(2, 1fr); }
+  @include lg { grid-template-columns: repeat(4, 1fr); }
+}
+
+.grid-auto {
+  @include grid-auto-fill(260px, $space-lg);
+}
+
+// --- Flex utilities ---
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-center { @include flex-center; }
+.flex-between { @include flex-between; }
+.items-center { align-items: center; }
+.gap-sm  { gap: $space-sm; }
+.gap-md  { gap: $space-md; }
+.gap-lg  { gap: $space-lg; }
+
+// --- Spacing utilities ---
+.mt-sm  { margin-top: $space-sm; }
+.mt-md  { margin-top: $space-md; }
+.mt-lg  { margin-top: $space-lg; }
+.mt-xl  { margin-top: $space-xl; }
+.mb-sm  { margin-bottom: $space-sm; }
+.mb-md  { margin-bottom: $space-md; }
+.mb-lg  { margin-bottom: $space-lg; }
+.mb-xl  { margin-bottom: $space-xl; }
+
+// --- Text utilities ---
+.text-center { text-align: center; }
+.text-muted  { color: var(--color-text-muted); }
+.text-sm     { font-size: $text-sm; }
+.text-lg     { font-size: $text-lg; }
+.fw-bold     { font-weight: $fw-bold; }
+.fw-black    { font-weight: $fw-black; }
+.uppercase   { text-transform: uppercase; letter-spacing: 0.06em; }
+.mono        { font-family: $font-mono; }
+
+// --- Footer ---
+.footer {
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-top: $border-thick;
+  border-color: var(--color-border);
+  padding: $space-xl $space-md;
+  font-size: $text-sm;
+  text-align: center;
+
+  a {
+    color: var(--color-primary);
+
+    &:hover { color: var(--color-accent); }
+  }
+}

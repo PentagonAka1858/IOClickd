@@ -15,16 +15,14 @@ export const Login = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const result = await login(email, password);
-
       if (result.success) {
         navigate('/');
       } else {
         setError(result.message);
       }
-    } catch (err) {
+    } catch {
       setError('Error al iniciar sesión');
     } finally {
       setLoading(false);
@@ -34,40 +32,50 @@ export const Login = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Iniciar Sesión</h1>
-        <p className="auth-subtitle">Accede a tu cuenta</p>
+        <div className="auth-card-header">
+          <h1>Iniciar Sesión</h1>
+          <p className="auth-subtitle">Accede a tu cuenta de PFG</p>
+        </div>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        <div className="auth-card-body">
+          {error && <div className="alert alert-danger">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Correo Electrónico</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@email.com"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="email">Correo Electrónico</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@email.com"
+                required
+                autoComplete="email"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="password">Contraseña</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="current-password"
+              />
+            </div>
 
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? 'Cargando...' : 'Iniciar Sesión'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className={`btn btn-primary btn-block${loading ? ' btn-loading' : ''}`}
+              disabled={loading}
+            >
+              {loading ? 'Entrando…' : 'Iniciar Sesión'}
+            </button>
+          </form>
+        </div>
 
         <div className="auth-footer">
           <p>

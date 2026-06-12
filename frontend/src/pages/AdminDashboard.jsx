@@ -153,171 +153,148 @@ export const AdminDashboard = () => {
   }
 
   return (
-    <div className="admin-dashboard-page">
-      <div className="page-header">
-        <h1>Panel de administración</h1>
-        <p>Gestión y estadísticas de productos, usuarios y reseñas.</p>
+    <div className="admin-page">
+      <header className="admin-header">
+        <h1>Panel de Administración</h1>
+        <span className="admin-badge">ADMIN</span>
+      </header>
+
+      {error && <div className="alert alert-danger mb-md">{error}</div>}
+      {actionError && <div className="alert alert-danger mb-md">{actionError}</div>}
+      {actionMessage && <div className="alert alert-success mb-md">{actionMessage}</div>}
+
+      {/* Stats */}
+      <div className="stats-row">
+        {[
+          { label: 'Productos', value: stats?.total_productos ?? 0 },
+          { label: 'Usuarios', value: stats?.total_usuarios ?? 0 },
+          { label: 'Reseñas', value: stats?.total_resenias ?? 0 },
+          { label: 'Consultas abiertas', value: stats?.consultas_abiertas ?? 0 },
+        ].map(({ label, value }) => (
+          <div key={label} className="stat-card">
+            <p className="stat-label">{label}</p>
+            <p className="stat-value">{value}</p>
+          </div>
+        ))}
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
-      {actionError && <div className="alert alert-danger">{actionError}</div>}
-      {actionMessage && <div className="alert alert-success">{actionMessage}</div>}
-
-      <section className="admin-stats-grid">
-        <article className="stat-card">
-          <span className="stat-label">Productos</span>
-          <strong>{stats?.total_productos ?? 0}</strong>
-        </article>
-        <article className="stat-card">
-          <span className="stat-label">Usuarios</span>
-          <strong>{stats?.total_usuarios ?? 0}</strong>
-        </article>
-        <article className="stat-card">
-          <span className="stat-label">Reseñas</span>
-          <strong>{stats?.total_resenias ?? 0}</strong>
-        </article>
-        <article className="stat-card">
-          <span className="stat-label">Consultas abiertas</span>
-          <strong>{stats?.consultas_abiertas ?? 0}</strong>
-        </article>
-      </section>
-
-      <section className="admin-section">
-        <div className="section-title-bar">
-          <h2>Moderación de reseñas</h2>
-        </div>
+      {/* Reviews */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontWeight: 900, marginBottom: '1rem', fontSize: '1.5rem' }}>Moderación de Reseñas</h2>
         {resenias.length === 0 ? (
           <div className="empty-state">
             <p>No hay reseñas para moderar.</p>
           </div>
         ) : (
-          <div className="admin-table admin-table-reviews">
-            <div className="table-head">
-              <span>Producto</span>
-              <span>Usuario</span>
-              <span>Visible</span>
-              <span>Puntuación</span>
-              <span>Creada</span>
-              <span>Acciones</span>
-            </div>
-            {resenias.map((resenia) => (
-              <div key={resenia.id} className="table-row">
-                <span>{resenia.producto?.marca} {resenia.producto?.modelo}</span>
-                <span>{resenia.user?.nombre || 'Anónimo'}</span>
-                <span>{resenia.visible ? 'Sí' : 'No'}</span>
-                <span>{resenia.puntuacion}</span>
-                <span>{formatDate(resenia.created_at)}</span>
-                <span className="actions-cell">
-                  <button
-                    className="btn btn-outline"
-                    disabled={actionLoadingId === resenia.id}
-                    onClick={() => handleToggleReviewVisibility(resenia)}
-                  >
-                    {resenia.visible ? 'Ocultar' : 'Mostrar'}
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    disabled={actionLoadingId === resenia.id}
-                    onClick={() => handleDeleteReview(resenia.id)}
-                  >
-                    Eliminar
-                  </button>
-                </span>
-              </div>
-            ))}
+          <div className="table-container admin-panel">
+            <table className="neo-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Usuario</th>
+                  <th>Visible</th>
+                  <th>Puntuación</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resenias.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.producto?.marca} {r.producto?.modelo}</td>
+                    <td>{r.user?.nombre || 'Anónimo'}</td>
+                    <td><span className={`badge ${r.visible ? 'badge-success' : 'badge-muted'}`}>{r.visible ? 'Sí' : 'No'}</span></td>
+                    <td className="mono">{r.puntuacion}</td>
+                    <td className="mono text-sm">{formatDate(r.created_at)}</td>
+                    <td>
+                      <div className="btn-group">
+                        <button className="btn btn-sm btn-outline" disabled={actionLoadingId === r.id} onClick={() => handleToggleReviewVisibility(r)}>
+                          {r.visible ? 'Ocultar' : 'Mostrar'}
+                        </button>
+                        <button className="btn btn-sm btn-danger" disabled={actionLoadingId === r.id} onClick={() => handleDeleteReview(r.id)}>
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>
 
-      <section className="admin-section">
-        <div className="section-title-bar">
-          <h2>Moderación de productos</h2>
-        </div>
+      {/* Products */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontWeight: 900, marginBottom: '1rem', fontSize: '1.5rem' }}>Moderación de Productos</h2>
         {productos.length === 0 ? (
-          <div className="empty-state">
-            <p>No hay productos cargados.</p>
-          </div>
+          <div className="empty-state"><p>No hay productos.</p></div>
         ) : (
-          <div className="admin-table admin-table-products">
-            <div className="table-head">
-              <span>Modelo</span>
-              <span>Marca</span>
-              <span>Tipo</span>
-              <span>Reseñas</span>
-              <span>Creada</span>
-              <span>Acciones</span>
-            </div>
-            {productos.map((producto) => (
-              <div key={producto.id} className="table-row">
-                <span>{producto.modelo}</span>
-                <span>{producto.marca}</span>
-                <span>{producto.tipo}</span>
-                <span>{producto.resenias_count}</span>
-                <span>{formatDate(producto.created_at)}</span>
-                <span className="actions-cell">
-                  <Link className="btn btn-outline" to={`/productos/${producto.id}`}>
-                    Ver
-                  </Link>
-                  {user?.rol === 'ADMIN' && (
-                    <button
-                      className="btn btn-danger"
-                      disabled={actionLoadingId === producto.id}
-                      onClick={() => handleDeleteProduct(producto.id)}
-                    >
-                      Eliminar
-                    </button>
-                  )}
-                </span>
-              </div>
-            ))}
+          <div className="table-container admin-panel">
+            <table className="neo-table">
+              <thead>
+                <tr><th>Modelo</th><th>Marca</th><th>Tipo</th><th>Reseñas</th><th>Fecha</th><th>Acciones</th></tr>
+              </thead>
+              <tbody>
+                {productos.map((p) => (
+                  <tr key={p.id}>
+                    <td style={{ fontWeight: 700 }}>{p.modelo}</td>
+                    <td>{p.marca}</td>
+                    <td><span className={`badge cat-${p.tipo?.toLowerCase()}`}>{p.tipo}</span></td>
+                    <td className="mono">{p.resenias_count}</td>
+                    <td className="mono text-sm">{formatDate(p.created_at)}</td>
+                    <td>
+                      <div className="btn-group">
+                        <Link className="btn btn-sm btn-outline" to={`/productos/${p.id}`}>Ver</Link>
+                        {user?.rol === 'ADMIN' && (
+                          <button className="btn btn-sm btn-danger" disabled={actionLoadingId === p.id} onClick={() => handleDeleteProduct(p.id)}>
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>
 
+      {/* Users */}
       {isAdmin && (
-        <section className="admin-section admin-users-section">
-          <div className="section-title-bar">
-            <h2>Gestión de usuarios</h2>
-          </div>
+        <section>
+          <h2 style={{ fontWeight: 900, marginBottom: '1rem', fontSize: '1.5rem' }}>Gestión de Usuarios</h2>
           {usuarios.length === 0 ? (
-            <div className="empty-state">
-              <p>No hay usuarios registrados.</p>
-            </div>
+            <div className="empty-state"><p>No hay usuarios.</p></div>
           ) : (
-            <div className="admin-table admin-table-users">
-              <div className="table-head">
-                <span>Nombre</span>
-                <span>Email</span>
-                <span>Rol</span>
-                <span>Visible</span>
-                <span>Reseñas</span>
-                <span>Acciones</span>
-              </div>
-              {usuarios.map((usuario) => (
-                <div key={usuario.id} className="table-row">
-                  <span>{usuario.nombre}</span>
-                  <span>{usuario.email}</span>
-                  <span>{usuario.rol}</span>
-                  <span>{usuario.visibilidad ? 'Sí' : 'No'}</span>
-                  <span>{usuario.resenias_count}</span>
-                  <span className="actions-cell">
-                    <button
-                      className="btn btn-outline"
-                      disabled={actionLoadingId === usuario.id}
-                      onClick={() => handleToggleUserVisibility(usuario)}
-                    >
-                      {usuario.visibilidad ? 'Ocultar' : 'Mostrar'}
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      disabled={actionLoadingId === usuario.id}
-                      onClick={() => handleDeleteUser(usuario.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </span>
-                </div>
-              ))}
+            <div className="table-container admin-panel">
+              <table className="neo-table">
+                <thead>
+                  <tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Visible</th><th>Reseñas</th><th>Acciones</th></tr>
+                </thead>
+                <tbody>
+                  {usuarios.map((u) => (
+                    <tr key={u.id}>
+                      <td style={{ fontWeight: 700 }}>{u.nombre}</td>
+                      <td className="mono text-sm">{u.email}</td>
+                      <td><span className="badge badge-secondary">{u.rol}</span></td>
+                      <td><span className={`badge ${u.visibilidad ? 'badge-success' : 'badge-muted'}`}>{u.visibilidad ? 'Sí' : 'No'}</span></td>
+                      <td className="mono">{u.resenias_count}</td>
+                      <td>
+                        <div className="btn-group">
+                          <button className="btn btn-sm btn-outline" disabled={actionLoadingId === u.id} onClick={() => handleToggleUserVisibility(u)}>
+                            {u.visibilidad ? 'Ocultar' : 'Mostrar'}
+                          </button>
+                          <button className="btn btn-sm btn-danger" disabled={actionLoadingId === u.id} onClick={() => handleDeleteUser(u.id)}>
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </section>

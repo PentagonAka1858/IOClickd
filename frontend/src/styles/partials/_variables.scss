@@ -1,0 +1,88 @@
+// ============================================================
+// _variables.scss — Neobrutalism Design Tokens
+// PFG Products DB
+// ============================================================
+
+// --- Paleta Principal ---
+$yellow:      #F8F65E;
+$green:         #067532;
+$blue:        #9ac5d2;
+$cyan:        #56f1fe;
+$black:       #121314;
+$white:       #f0f4f5;
+
+// --- Paleta de Apoyo ---
+$danger:      #ff3b3b;
+$success:     #00c851;
+$warning:     #ff9500;
+$info:        $cyan;
+
+// --- Sombra neobrutalist (desplazada, sin blur) ---
+$shadow-sm:   3px 3px 0 $black;
+$shadow-md:   4px 4px 0 $black;
+$shadow-lg:   6px 6px 0 $black;
+$shadow-xl:   8px 8px 0 $black;
+
+// --- Border ---
+$border-width: 2px;
+$border:       #{$border-width} solid $black;
+$border-thick: 3px solid $black;
+
+// --- Espaciado ---
+$space-xs:  0.25rem;   // 4px
+$space-sm:  0.5rem;    // 8px
+$space-md:  1rem;      // 16px
+$space-lg:  1.5rem;    // 24px
+$space-xl:  2rem;      // 32px
+$space-2xl: 3rem;      // 48px
+$space-3xl: 4rem;      // 64px
+
+// --- Tipografía ---
+$font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+$font-body:    'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+$font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+// --- Escala tipográfica ---
+$text-xs:   0.75rem;
+$text-sm:   0.875rem;
+$text-base: 1rem;
+$text-lg:   1.125rem;
+$text-xl:   1.25rem;
+$text-2xl:  1.5rem;
+$text-3xl:  2rem;
+$text-4xl:  2.5rem;
+$text-5xl:  3.5rem;
+$text-6xl:  4.5rem;
+
+// --- Pesos ---
+$fw-regular: 400;
+$fw-medium:  500;
+$fw-bold:    700;
+$fw-black:   900;
+
+// --- Bordes redondeados (neobrutalism = 0 o muy poco) ---
+$radius-sm:  0px;
+$radius-md:  2px;
+$radius-lg:  4px;
+$radius-pill: 2px;
+
+// --- Z-index ---
+$z-dropdown:  100;
+$z-navbar:    200;
+$z-modal:     300;
+$z-toast:     400;
+
+// --- Transiciones ---
+$transition-fast:   0.1s ease;
+$transition-normal: 0.2s ease;
+$transition-slow:   0.3s ease;
+
+// --- Breakpoints (mobile-first) ---
+$bp-sm:  480px;
+$bp-md:  768px;
+$bp-lg:  1024px;
+$bp-xl:  1280px;
+$bp-2xl: 1440px;
+
+// --- Navbar height ---
+$navbar-height: 64px;
