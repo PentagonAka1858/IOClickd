@@ -102,120 +102,70 @@ export const Perfil = () => {
     <div className="perfil-page">
       <header className="page-header">
         <h1>Mi Perfil</h1>
-        <p>Gestiona la información de tu cuenta y personaliza tu perfil</p>
+        <p className="page-subtitle">Gestiona tu información y personaliza tu cuenta</p>
       </header>
 
-      <div className="perfil-container">
-        {/* Lado izquierdo: Avatar y Detalles básicos */}
-        <section className="perfil-sidebar">
+      <div className="perfil-grid">
+        {/* Sidebar */}
+        <aside className="perfil-sidebar">
           <div className="avatar-card">
-            <div className="avatar-preview-container" onClick={handleAvatarClick} title="Haga clic para cambiar la foto">
-              <img src={fotoPreview} alt="Avatar de usuario" className="profile-avatar-large" />
-              <div className="avatar-overlay">
-                <span>Cambiar Foto</span>
+            <div className="avatar-wrap" onClick={handleAvatarClick} style={{ cursor: 'pointer' }} title="Cambiar foto">
+              <img src={fotoPreview} alt="Avatar" />
+            </div>
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={{ display: 'none' }} />
+            <h2>{user?.nombre}</h2>
+            <span className="user-role">{user?.rol}</span>
+          </div>
+
+          <div className="card">
+            <p style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
+              Cuenta
+            </p>
+            <p style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}><strong>Email:</strong> {user?.email}</p>
+            <p style={{ fontSize: '0.85rem' }}><strong>Miembro desde:</strong> {formatDate(user?.created_at)}</p>
+          </div>
+        </aside>
+
+        {/* Form */}
+        <div className="perfil-form-section">
+          <div className="section-header">
+            <h3>Editar Perfil</h3>
+          </div>
+          <div className="section-body">
+            {message && <div className="alert alert-success">{message}</div>}
+            {error && <div className="alert alert-danger">{error}</div>}
+
+            <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
+              <div className="form-group">
+                <label htmlFor="nombre">Nombre completo</label>
+                <input type="text" id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required placeholder="Tu nombre completo" />
               </div>
-            </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/*"
-              style={{ display: 'none' }}
-            />
-            <h3>{user?.nombre}</h3>
-            <span className={`role-badge ${user?.rol?.toLowerCase()}`}>{user?.rol}</span>
-          </div>
-
-          <div className="info-card">
-            <h4>Información de la Cuenta</h4>
-            <div className="info-item">
-              <span className="info-label">Email:</span>
-              <span className="info-value">{user?.email}</span>
-            </div>
-            <div className="info-item">
-              <span className="info-label">Miembro desde:</span>
-              <span className="info-value">{formatDate(user?.created_at)}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Lado derecho: Formulario de Edición */}
-        <section className="perfil-form-card">
-          <h2>Editar Perfil</h2>
-          {message && <div className="alert alert-success">{message}</div>}
-          {error && <div className="alert alert-danger">{error}</div>}
-
-          <form onSubmit={handleSubmit} className="perfil-form">
-            <div className="form-group">
-              <label htmlFor="nombre">Nombre completo</label>
-              <input
-                type="text"
-                id="nombre"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                required
-                placeholder="Ingresa tu nombre"
-              />
-            </div>
-
               <div className="form-group">
                 <label htmlFor="username">Nombre de usuario</label>
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="nombre_de_usuario"
-                />
+                <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="nombre_usuario" />
               </div>
-
               <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="tu@email.com"
-                />
+                <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="tu@email.com" />
               </div>
-
               <div className="form-group">
-                <label htmlFor="visibilidad">Visibilidad de perfil</label>
-                <div>
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      id="visibilidad"
-                      checked={visibilidad}
-                      onChange={(e) => setVisibilidad(e.target.checked)}
-                    />
-                    <span className="slider" />
-                  </label>
-                </div>
+                <label htmlFor="idioma_preferido">Idioma preferido</label>
+                <select id="idioma_preferido" value={idiomaPreferido} onChange={(e) => setIdiomaPreferido(e.target.value)}>
+                  <option value="es">Español</option>
+                  <option value="en">Inglés</option>
+                  <option value="fr">Francés</option>
+                </select>
               </div>
-
-            <div className="form-group">
-              <label htmlFor="idioma_preferido">Idioma preferido</label>
-              <select
-                id="idioma_preferido"
-                value={idiomaPreferido}
-                onChange={(e) => setIdiomaPreferido(e.target.value)}
-              >
-                <option value="es">Español (es)</option>
-                <option value="en">Inglés (en)</option>
-                <option value="fr">Francés (fr)</option>
-              </select>
-            </div>
-
-            <div className="form-actions">
-              <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? 'Guardando...' : 'Guardar Cambios'}
+              <label className="form-check">
+                <input type="checkbox" checked={visibilidad} onChange={(e) => setVisibilidad(e.target.checked)} />
+                <span>Perfil público</span>
+              </label>
+              <button type="submit" className={`btn btn-primary${saving ? ' btn-loading' : ''}`} disabled={saving}>
+                {saving ? 'Guardando…' : 'Guardar Cambios'}
               </button>
-            </div>
-          </form>
-        </section>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

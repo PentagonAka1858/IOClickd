@@ -1,6 +1,11 @@
-@use './variables' as *;
+// ============================================================
+// MainLayout.scss — Layout wrapper
+// Usa CSS custom properties del sistema de temas
+// ============================================================
+@use './partials/variables' as *;
+@use './partials/mixins' as *;
 
-.layout {
+.main-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -15,24 +20,18 @@
 }
 
 .footer {
-  background-color: $bg-light;
-  border-top: 1px solid $border-color;
-  padding: 2rem;
+  background: var(--color-text);
+  border-top: 3px solid var(--color-border);
+  padding: $space-xl $space-md;
   text-align: center;
-  color: $secondary-color;
-  margin-top: auto;
+  font-family: $font-display;
+  font-size: $text-sm;
+  font-weight: $fw-medium;
+  letter-spacing: 0.02em;
 
   p {
     margin: 0;
-  }
-}
-
-.loading-container {
-  @include flex-center;
-  min-height: 300px;
-  
-  p {
-    font-size: 1.2rem;
-    color: $secondary-color;
+    opacity: 0.85;
+    color: var(--color-bg);
   }
 }

@@ -1,0 +1,252 @@
+// ============================================================
+// _navbar.scss — Neobrutalist Sticky Navigation
+// ============================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: $z-navbar;
+  background: var(--color-primary);
+  border-bottom: $border-thick;
+  border-color: var(--color-border);
+  height: $navbar-height;
+  width: 100%;
+
+  .navbar-container {
+    @include flex-between;
+    @include container;
+    height: 100%;
+    gap: $space-md;
+  }
+
+  // --- Brand / Logo ---
+  .navbar-brand {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    flex-shrink: 0;
+
+    .logo-text {
+      font-family: $font-display;
+      font-weight: $fw-black;
+      font-size: $text-2xl;
+      color: $black;
+      letter-spacing: -0.03em;
+      line-height: 1;
+
+      // Keyboard bracket aesthetic
+      &::before { content: '['; opacity: 0.5; }
+      &::after  { content: ']'; opacity: 0.5; }
+    }
+  }
+
+  // --- Menu (center nav) ---
+  .navbar-menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-lg;
+    flex: 1;
+
+    @include navbar-collapse {
+      display: none;
+
+      &.is-open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        inset: $navbar-height 0 0 0;
+        background: var(--color-primary);
+        border-top: $border-thick;
+        padding: $space-xl $space-lg;
+        gap: $space-xl;
+        z-index: $z-navbar - 1;
+        overflow-y: auto;
+        align-items: flex-start;
+      }
+    }
+  }
+
+  .navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    list-style: none;
+    flex-wrap: wrap;
+
+    @include navbar-collapse {
+      .is-open & {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+      }
+    }
+  }
+
+  .nav-item {
+    .nav-link {
+      display: inline-block;
+      padding: $space-xs $space-md;
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-sm;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: $black;
+      text-decoration: none;
+      border: $border-width solid transparent;
+      transition: border-color $transition-fast, background $transition-fast, box-shadow $transition-fast, transform $transition-fast;
+
+      &:hover,
+      &.active {
+        border-color: $black;
+        background: rgba(0, 0, 0, 0.08);
+        box-shadow: $shadow-sm;
+        transform: translate(-1px, -1px);
+      }
+
+      @include navbar-collapse {
+        .is-open & {
+          font-size: $text-lg;
+          padding: $space-sm $space-md;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  // --- Auth section ---
+  .navbar-auth {
+    flex-shrink: 0;
+
+    @include navbar-collapse {
+      .is-open & {
+        width: 100%;
+        padding-top: $space-lg;
+        border-top: $border-width solid rgba(0,0,0,0.15);
+      }
+    }
+  }
+
+  .auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+
+    @include navbar-collapse {
+      .is-open & {
+        flex-direction: column;
+        width: 100%;
+
+        .btn { width: 100%; justify-content: center; }
+      }
+    }
+
+    .btn-outline {
+      border-color: $black;
+      color: $black;
+
+      &:hover {
+        background: rgba(0,0,0,0.1);
+      }
+    }
+  }
+
+  .user-section {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  .user-profile-link {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    text-decoration: none;
+    padding: $space-xs $space-sm;
+    border: $border-width solid transparent;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+      border-color: $black;
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border: $border-width solid $black;
+    object-fit: cover;
+    border-radius: 0;
+  }
+
+  .user-name {
+    font-weight: $fw-bold;
+    font-size: $text-sm;
+    color: $black;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    max-width: 100px;
+    @include truncate;
+  }
+
+  .logout-btn {
+    // Inline equivalent of .btn + .btn-sm + .btn-inverse
+    // (@extend cannot cross @use module boundaries)
+    @include key-button;
+    @include focus-ring;
+    padding: $space-xs $space-md;
+    font-size: $text-xs;
+    line-height: 1;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+    box-shadow: var(--shadow-md);
+
+    &:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  // --- Hamburger toggle ---
+  .navbar-toggle {
+    display: none;
+    background: none;
+    border: $border-width solid $black;
+    padding: $space-xs $space-sm;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    transition: box-shadow $transition-fast;
+
+    &:hover {
+      box-shadow: $shadow-sm;
+    }
+
+    span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: $black;
+      transition: transform $transition-fast, opacity $transition-fast;
+    }
+
+    &.is-open {
+      span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+      span:nth-child(2) { opacity: 0; }
+      span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+    }
+
+    @include navbar-collapse {
+      display: flex;
+    }
+  }
+}

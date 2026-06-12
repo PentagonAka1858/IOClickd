@@ -143,141 +143,92 @@ export const MisListas = () => {
   };
 
   return (
-    <div className="mis-listas-page">
-      <header className="mis-listas-header">
+    <div className="listas-page">
+      <header className="page-header header-row">
         <div>
-          <h1>Mis Listas Personales</h1>
-          <p>Administra tus listas de productos guardadas y revisa qué productos has agrupado.</p>
+          <h1>Mis Listas</h1>
+          <p className="page-subtitle">Agrupa productos y gestiona tus colecciones.</p>
         </div>
       </header>
 
-      {error && <div className="alert alert-danger">{error}</div>}
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      {error && <div className="alert alert-danger mb-md">{error}</div>}
+      {successMessage && <div className="alert alert-success mb-md">{successMessage}</div>}
 
-      <section className="create-list-card">
-        <h2>Crear nueva lista</h2>
-        <p>Organiza productos en listas para darle seguimiento a tus intereses.</p>
-
-        <div className="form-row">
-          <label>Nombre de la lista</label>
-          <input
-            type="text"
-            value={newListName}
-            onChange={(e) => setNewListName(e.target.value)}
-            placeholder="Ej. Lista de la PC principal"
-          />
+      {/* Create list form */}
+      <section className="card mb-xl">
+        <h2 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Crear nueva lista</h2>
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          <div className="form-group">
+            <label>Nombre de la lista</label>
+            <input
+              type="text"
+              value={newListName}
+              onChange={(e) => setNewListName(e.target.value)}
+              placeholder="Ej. Lista de la PC principal"
+            />
+          </div>
+          <div className="form-group">
+            <label>Descripción</label>
+            <textarea
+              value={newListDescription}
+              onChange={(e) => setNewListDescription(e.target.value)}
+              placeholder="Descripción opcional"
+            />
+          </div>
+          {formError && <div className="alert alert-danger">{formError}</div>}
+          <button className="btn btn-primary" onClick={handleCreateList} disabled={creating}>
+            {creating ? 'Creando…' : '+ Crear lista'}
+          </button>
         </div>
-
-        <div className="form-row">
-          <label>Descripción</label>
-          <textarea
-            value={newListDescription}
-            onChange={(e) => setNewListDescription(e.target.value)}
-            placeholder="Descripción opcional"
-          />
-        </div>
-
-        {formError && <div className="form-error">{formError}</div>}
-
-        <button className="btn btn-primary" onClick={handleCreateList} disabled={creating}>
-          {creating ? 'Creando...' : 'Crear lista'}
-        </button>
       </section>
 
-      <section className="listas-grid-section">
-        <h2>Listas guardadas</h2>
-
+      {/* Lists grid */}
+      <section>
+        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: 900 }}>Listas guardadas</h2>
         {loading ? (
-          <div className="loading-container">
-            <p>Cargando tus listas...</p>
-          </div>
+          <div className="loading-container"><div className="spinner" /><span>Cargando…</span></div>
         ) : listas.length === 0 ? (
           <div className="empty-state">
-            <h3>No tienes listas personales aún</h3>
-            <p>Crea una lista para guardar productos y agruparlos como quieras.</p>
+            <h3>No tienes listas aún</h3>
+            <p>Crea una lista para agrupar y seguir tus productos favoritos.</p>
           </div>
         ) : (
-          <div className="listas-grid">
+          <div className="lists-grid">
             {listas.map((lista) => (
               <article key={lista.id} className="lista-card">
                 {editingListId === lista.id ? (
-                  <div className="edit-list-form">
-                    <div className="form-row">
+                  <div style={{ display: 'grid', gap: '0.75rem' }}>
+                    <div className="form-group">
                       <label>Nombre</label>
-                      <input
-                        type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
-                      />
+                      <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} />
                     </div>
-                    <div className="form-row">
+                    <div className="form-group">
                       <label>Descripción</label>
-                      <textarea
-                        value={editDescription}
-                        onChange={(e) => setEditDescription(e.target.value)}
-                      />
+                      <textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
                     </div>
-                    <div className="form-row checkbox-row">
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={editPublic}
-                          onChange={(e) => setEditPublic(e.target.checked)}
-                        />
-                        Lista pública
-                      </label>
-                    </div>
-                    <div className="list-footer">
-                      <button
-                        className="btn btn-primary btn-sm"
-                        type="button"
-                        onClick={() => handleUpdateList(lista.id)}
-                        disabled={updating}
-                      >
-                        {updating ? 'Guardando...' : 'Guardar cambios'}
+                    <label className="form-check">
+                      <input type="checkbox" checked={editPublic} onChange={(e) => setEditPublic(e.target.checked)} />
+                      <span>Lista pública</span>
+                    </label>
+                    <div className="btn-group">
+                      <button className="btn btn-sm btn-primary" type="button" onClick={() => handleUpdateList(lista.id)} disabled={updating}>
+                        {updating ? 'Guardando…' : 'Guardar cambios'}
                       </button>
-                      <button
-                        className="btn btn-outline btn-sm"
-                        type="button"
-                        onClick={handleCancelEdit}
-                        disabled={updating}
-                      >
+                      <button className="btn btn-sm btn-outline" type="button" onClick={handleCancelEdit} disabled={updating}>
                         Cancelar
                       </button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div className="card-header">
-                      <div>
-                        <h3>{lista.nombre_lista}</h3>
-                        <p className="list-meta">{lista.productos_count ?? 0} productos</p>
-                      </div>
-                      <span className={`visibility-pill ${lista.publica ? 'publica' : 'privada'}`}>
-                        {lista.publica ? 'Pública' : 'Privada'}
-                      </span>
-                    </div>
-
-                    <p className="list-description">{lista.descripcion || 'Sin descripción'}</p>
-
-                    <div className="list-footer">
-                      <Link className="btn btn-outline btn-sm" to={`/listas/${lista.id}`}>
-                        Ver lista
-                      </Link>
-                      <button
-                        className="btn btn-outline btn-sm"
-                        type="button"
-                        onClick={() => handleStartEdit(lista)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        type="button"
-                        onClick={() => handleDeleteList(lista.id)}
-                        disabled={deleteProcessingId === lista.id}
-                      >
-                        {deleteProcessingId === lista.id ? 'Eliminando...' : 'Eliminar'}
+                    <h3>{lista.nombre_lista}</h3>
+                    <p className="lista-meta">{lista.productos_count ?? 0} productos • {lista.publica ? 'Pública' : 'Privada'}</p>
+                    <span className="lista-count">{lista.publica ? 'Pública' : 'Privada'}</span>
+                    <div className="btn-group" style={{ marginTop: '1rem' }}>
+                      <Link className="btn btn-sm btn-primary" to={`/listas/${lista.id}`}>Ver</Link>
+                      <button className="btn btn-sm btn-outline" type="button" onClick={() => handleStartEdit(lista)}>Editar</button>
+                      <button className="btn btn-sm btn-danger" type="button" onClick={() => handleDeleteList(lista.id)} disabled={deleteProcessingId === lista.id}>
+                        {deleteProcessingId === lista.id ? '…' : 'Eliminar'}
                       </button>
                     </div>
                   </>

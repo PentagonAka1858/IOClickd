@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import '../styles/ListaDetalle.scss';
 
 export const ListaDetalle = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [lista, setLista] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -47,9 +48,13 @@ export const ListaDetalle = () => {
   if (error) {
     return (
       <div className="lista-detalle-page">
-        <Link to="/listas" className="back-link">
-          ← Volver a mis listas
-        </Link>
+        <button className="btn-back" onClick={() => navigate(-1)} aria-label="Volver atrás" style={{ marginBottom: '1.5rem' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Volver
+        </button>
         <div className="alert alert-danger" style={{ marginTop: '2rem' }}>
           {error}
         </div>
@@ -59,51 +64,57 @@ export const ListaDetalle = () => {
 
   return (
     <div className="lista-detalle-page">
-      <Link to="/listas" className="back-link">
-        ← Volver a mis listas
-      </Link>
+      <button className="btn-back" onClick={() => navigate(-1)} aria-label="Volver atrás" style={{ marginBottom: '1.5rem' }}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Volver
+      </button>
 
       <header className="lista-header">
         <div>
           <h1>{lista.nombre_lista}</h1>
-          <p>{lista.descripcion || 'Sin descripción'}</p>
-          <div className="meta-row">
-            <span className={`status-pill ${lista.publica ? 'publica' : 'privada'}`}>
-              {lista.publica ? 'Pública' : 'Privada'}
+          <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>{lista.descripcion || 'Sin descripción'}</p>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <span className={`badge ${lista.publica ? 'badge-success' : 'badge-muted'}`}>
+              {lista.publica ? '🌐 Pública' : '🔒 Privada'}
             </span>
-            <span>{lista.productos?.length ?? 0} productos</span>
+            <span className="badge badge-primary">{lista.productos?.length ?? 0} productos</span>
           </div>
         </div>
       </header>
 
-      <section className="lista-productos-section">
-        {lista.productos?.length > 0 ? (
-          <div className="productos-grid">
-            {lista.productos.map((producto) => (
-              <article key={producto.id} className="producto-card">
-                <div className="card-content">
-                  <div className="product-head">
-                    <h2>{producto.modelo}</h2>
-                    <span className="product-type">{producto.tipo}</span>
-                  </div>
-                  <p className="product-brand">{producto.marca}</p>
-                  <p className="product-description">
-                    {producto.descripcion || 'Sin descripción disponible.'}
-                  </p>
-                  <Link to={`/productos/${producto.id}`} className="btn btn-outline btn-sm">
-                    Ver producto
-                  </Link>
+      {lista.productos?.length > 0 ? (
+        <div className="lista-items">
+          {lista.productos.map((producto) => (
+            <div key={producto.id} className="lista-item-row">
+              {producto.foto ? (
+                <img src={`http://localhost:8000/storage/${producto.foto}`} alt={producto.modelo} />
+              ) : (
+                <div style={{ width: 80, height: 80, background: 'var(--color-surface-alt)', border: '2px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
+                  📦
                 </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <h3>Esta lista está vacía</h3>
-            <p>Añade productos desde el catálogo para empezar a organizar tus listas.</p>
-          </div>
-        )}
-      </section>
+              )}
+              <div>
+                <p className="item-name">{producto.modelo}</p>
+                <p className="item-note">{producto.marca} — {producto.tipo}</p>
+                <p className="item-note" style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                  {producto.descripcion || 'Sin descripción.'}
+                </p>
+              </div>
+              <Link to={`/productos/${producto.id}`} className="btn btn-sm btn-primary">Ver</Link>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <span className="empty-icon">📋</span>
+          <h3>Lista vacía</h3>
+          <p>Añade productos desde el catálogo para empezar a organizar tus listas.</p>
+          <Link to="/productos" className="btn btn-primary">Ver Catálogo</Link>
+        </div>
+      )}
     </div>
   );
 };

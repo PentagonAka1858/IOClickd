@@ -1,0 +1,561 @@
+// ============================================================
+// BuscarPerfiles.scss — Búsqueda de perfiles públicos
+// ============================================================
+@use './partials/variables' as *;
+@use './partials/mixins' as *;
+
+.buscar-perfiles-page {
+  min-height: calc(100vh - #{$navbar-height});
+  padding-bottom: $space-3xl;
+
+  // ── Cabecera ───────────────────────────────────────────────
+
+  .bp-header {
+    background: var(--color-primary);
+    border-bottom: 3px solid var(--color-border);
+    padding: $space-2xl $space-md $space-lg;
+
+    @include md {
+      padding: $space-2xl $space-lg $space-lg;
+    }
+
+    &__inner {
+      @include container;
+    }
+
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      font-family: $font-display;
+      font-weight: $fw-black;
+      font-size: $text-3xl;
+      color: var(--color-primary-text);
+      margin: 0 0 $space-xs;
+      letter-spacing: -0.02em;
+
+      @include md {
+        font-size: $text-4xl;
+      }
+    }
+
+    &__title-icon {
+      display: flex;
+      align-items: center;
+    }
+
+    &__subtitle {
+      font-family: $font-display;
+      font-size: $text-base;
+      color: var(--color-primary-text);
+      opacity: 0.75;
+      margin: 0 0 $space-lg;
+    }
+  }
+
+  // ── Stats de seguidos / seguidores ─────────────────────────
+
+  .bp-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-md;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    padding: $space-sm $space-lg;
+    margin-top: $space-xs;
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    &__num {
+      font-family: $font-display;
+      font-weight: $fw-black;
+      font-size: $text-xl;
+      color: var(--color-primary-text);
+      line-height: 1;
+    }
+
+    &__label {
+      font-family: $font-display;
+      font-size: $text-xs;
+      font-weight: $fw-bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-primary-text);
+      opacity: 0.7;
+    }
+
+    &__divider {
+      width: 2px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  // ── Tabs ───────────────────────────────────────────────────
+
+  .bp-tabs {
+    display: flex;
+    border-bottom: 3px solid var(--color-border);
+    background: var(--color-surface);
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+
+    &__tab {
+      display: flex;
+      align-items: center;
+      gap: $space-xs;
+      padding: $space-md $space-lg;
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-sm;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color $transition-fast, border-color $transition-fast;
+
+      &:hover {
+        color: var(--color-text);
+      }
+
+      &.is-active {
+        color: var(--color-primary-text);
+        border-bottom-color: var(--color-primary-text);
+      }
+    }
+
+    &__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 $space-xs;
+      font-size: $text-xs;
+      font-weight: $fw-black;
+      background: var(--color-primary-text);
+      color: var(--color-primary);
+      border-radius: 999px;
+    }
+  }
+
+  // ── Barra de búsqueda ──────────────────────────────────────
+
+  .bp-search-wrap {
+    @include container;
+    padding-top: $space-xl;
+    padding-bottom: $space-md;
+  }
+
+  .bp-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--color-border);
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+    background: var(--color-surface);
+    transition: box-shadow $transition-fast, transform $transition-fast;
+
+    &:focus-within {
+      box-shadow: 4px 4px 0 var(--color-primary-text);
+      transform: translate(-2px, -2px);
+    }
+
+    &__icon {
+      display: flex;
+      align-items: center;
+      padding: 0 $space-sm 0 $space-md;
+      color: var(--color-text-muted);
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    &__input {
+      flex: 1;
+      padding: $space-sm $space-md $space-sm 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: $font-display;
+      font-size: $text-base;
+      color: var(--color-text);
+
+      &::placeholder {
+        color: var(--color-text-muted);
+        opacity: 0.7;
+      }
+
+      &::-webkit-search-cancel-button { display: none; }
+    }
+
+    &__clear {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      margin-right: $space-xs;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: $text-sm;
+      color: var(--color-text-muted);
+      transition: color $transition-fast;
+
+      &:hover { color: var(--color-text); }
+    }
+  }
+
+  // Filtro checkbox
+  .bp-filter-check {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+    margin-top: $space-sm;
+    font-family: $font-display;
+    font-size: $text-sm;
+    font-weight: $fw-bold;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    user-select: none;
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--color-primary-text);
+      cursor: pointer;
+    }
+
+    &:hover span {
+      color: var(--color-text);
+    }
+  }
+
+  .bp-results-count {
+    margin-top: $space-sm;
+    font-size: $text-sm;
+    font-family: $font-display;
+    font-weight: $fw-bold;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  // ── Contenido ──────────────────────────────────────────────
+
+  .bp-content {
+    @include container;
+  }
+
+  // ── Sección lista (siguiendo/seguidores) ───────────────────
+
+  .bp-list-section {
+    padding-top: $space-xl;
+
+    &__header {
+      margin-bottom: $space-lg;
+    }
+
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      font-family: $font-display;
+      font-weight: $fw-black;
+      font-size: $text-xl;
+      color: var(--color-text);
+      margin: 0;
+    }
+
+    &__count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 $space-sm;
+      font-size: $text-sm;
+      font-weight: $fw-black;
+      background: var(--color-primary);
+      color: var(--color-primary-text);
+      border: 2px solid var(--color-border);
+    }
+  }
+
+  // ── Grid de cards ──────────────────────────────────────────
+
+  .bp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: $space-md;
+
+    @include md {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: $space-lg;
+    }
+
+    &--loading {
+      .bp-card--skeleton {
+        pointer-events: none;
+      }
+    }
+  }
+
+  // ── Card de perfil ─────────────────────────────────────────
+
+  .bp-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: $space-lg $space-md;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+    transition: transform $transition-fast, box-shadow $transition-fast;
+    position: relative;
+
+    &:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 5px 5px 0 var(--color-border);
+    }
+
+    // Avatar — botón sin estilos de botón
+    &__avatar-wrap {
+      width: 72px;
+      height: 72px;
+      border: 2px solid var(--color-border);
+      border-bottom-width: 4px;
+      border-right-width: 4px;
+      overflow: hidden;
+      margin-bottom: $space-md;
+      flex-shrink: 0;
+
+      &.skeleton-pulse {
+        width: 72px;
+        height: 72px;
+        border-radius: 0;
+        border: 2px solid var(--color-border);
+      }
+
+      &--link {
+        background: none;
+        cursor: pointer;
+        padding: 0;
+        transition: transform $transition-fast;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    &__avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    // Info
+    &__body {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $space-xs;
+    }
+
+    // Nombre como botón-link
+    &__name-link {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+
+      &:hover .bp-card__name {
+        text-decoration: underline;
+        color: var(--color-primary-text);
+      }
+    }
+
+    &__name {
+      font-family: $font-display;
+      font-weight: $fw-black;
+      font-size: $text-base;
+      color: var(--color-text);
+      margin: 0;
+      line-height: 1.2;
+      transition: color $transition-fast;
+    }
+
+    &__username {
+      font-family: $font-display;
+      font-size: $text-sm;
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    &__badge {
+      display: inline-block;
+      padding: 2px $space-sm;
+      font-family: $font-display;
+      font-size: $text-xs;
+      font-weight: $fw-bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1.5px solid currentColor;
+
+      &--user  { color: var(--color-text-muted); }
+      &--mod   { color: $info; }
+      &--admin { color: $danger; }
+    }
+
+    // Botón seguir
+    &__follow-btn {
+      margin-top: $space-md;
+      width: 100%;
+      padding: $space-xs $space-md;
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-xs;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      background: var(--color-primary-text);
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary-text);
+      border-bottom-width: 3px;
+      border-right-width: 3px;
+      transition: transform $transition-fast, box-shadow $transition-fast,
+        background $transition-fast, color $transition-fast,
+        border-bottom-width $transition-fast;
+
+      &:hover:not(:disabled) {
+        transform: translate(-2px, -2px);
+        box-shadow: 3px 3px 0 var(--color-primary-text);
+      }
+
+      &:active:not(:disabled) {
+        transform: translate(1px, 1px);
+        border-bottom-width: 1px;
+        border-right-width: 1px;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+
+      // Estado "ya siguiendo"
+      &.is-following {
+        background: transparent;
+        color: var(--color-text-muted);
+        border-color: var(--color-border);
+
+        &:hover:not(:disabled) {
+          background: rgba(255, 59, 59, 0.07);
+          color: $danger;
+          border-color: $danger;
+        }
+      }
+    }
+
+    // Badge "Tú"
+    &__you-badge {
+      margin-top: $space-md;
+      padding: 2px $space-sm;
+      font-family: $font-display;
+      font-size: $text-xs;
+      font-weight: $fw-bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--color-primary);
+      color: var(--color-primary-text);
+      border: 1.5px solid var(--color-primary-text);
+    }
+
+    // Skeleton card
+    &--skeleton {
+      .bp-card__body {
+        width: 100%;
+      }
+    }
+  }
+
+  // ── Skeleton pulse ─────────────────────────────────────────
+
+  @keyframes skeleton-shimmer {
+    0%   { opacity: 0.5; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.5; }
+  }
+
+  .skeleton-pulse {
+    background: var(--color-border);
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  }
+
+  .skeleton-line {
+    height: 12px;
+    border-radius: 0;
+    margin: 4px auto;
+    width: 60%;
+
+    &--wide  { width: 80%; height: 16px; }
+    &--short { width: 40%; }
+  }
+
+  // ── Estados vacío / error ──────────────────────────────────
+
+  .bp-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-md;
+    padding: $space-3xl $space-lg;
+    text-align: center;
+
+    &__icon {
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    p {
+      font-family: $font-display;
+      font-weight: $fw-bold;
+      font-size: $text-base;
+      color: var(--color-text-muted);
+      max-width: 400px;
+      margin: 0;
+    }
+
+    &--error p {
+      color: $danger;
+    }
+  }
+
+  // ── Cargar más ─────────────────────────────────────────────
+
+  .bp-load-more {
+    display: flex;
+    justify-content: center;
+    padding: $space-xl 0;
+  }
+}

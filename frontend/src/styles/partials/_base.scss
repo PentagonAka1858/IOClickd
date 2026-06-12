@@ -1,0 +1,159 @@
+// ============================================================
+// _base.scss — Reset, Typography, Global Tokens
+// ============================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// --- Google Fonts import ---
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+// --- Hard reset ---
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// --- Root ---
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: $font-body;
+  font-size: $text-base;
+  font-weight: $fw-regular;
+  line-height: 1.6;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// --- Headings ---
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-display;
+  font-weight: $fw-black;
+  line-height: 1.15;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: $text-4xl; }
+h2 { font-size: $text-3xl; }
+h3 { font-size: $text-2xl; }
+h4 { font-size: $text-xl; }
+h5 { font-size: $text-lg; }
+h6 { font-size: $text-base; }
+
+@include md {
+  h1 { font-size: $text-5xl; }
+  h2 { font-size: $text-4xl; }
+  h3 { font-size: $text-3xl; }
+}
+
+// --- Paragraphs ---
+p {
+  color: var(--color-text);
+  line-height: 1.7;
+
+  + p { margin-top: $space-md; }
+}
+
+// --- Links ---
+a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: $fw-medium;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+// --- Images ---
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// --- Lists ---
+ul, ol {
+  padding-left: $space-lg;
+}
+
+// --- Code ---
+code, pre {
+  font-family: $font-mono;
+  font-size: $text-sm;
+}
+
+pre {
+  overflow-x: auto;
+  padding: $space-md;
+  background: var(--color-surface-alt);
+  border: $border-width solid var(--color-border);
+}
+
+// --- HR ---
+hr {
+  border: none;
+  border-top: $border-width solid var(--color-border);
+  margin: $space-xl 0;
+}
+
+// --- Scrollbar ---
+html {
+  @include custom-scrollbar;
+}
+
+// --- Reduce motion ---
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// --- Animations ---
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes keyPress {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(2px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}

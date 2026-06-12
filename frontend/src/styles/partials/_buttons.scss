@@ -1,0 +1,210 @@
+// ============================================================
+// _buttons.scss — Keyboard Key Neobrutalist Buttons
+// ============================================================
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// --- Base .btn ---
+.btn {
+  @include key-button;
+  @include focus-ring;
+  padding: $space-sm $space-lg;
+  font-size: $text-sm;
+  line-height: 1;
+  white-space: nowrap;
+  border-color: var(--color-border);
+  position: relative;
+  overflow: hidden;
+
+  // Keyboard cap ridge (top highlight)
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+  }
+
+  // --- Sizes ---
+  &.btn-sm {
+    padding: $space-xs $space-md;
+    font-size: $text-xs;
+  }
+
+  &.btn-lg {
+    padding: $space-md $space-2xl;
+    font-size: $text-base;
+  }
+
+  &.btn-block {
+    width: 100%;
+  }
+
+  &.btn-icon {
+    padding: $space-sm;
+    aspect-ratio: 1;
+  }
+
+  // --- Variants ---
+
+  // Primary (Yellow key)
+  &.btn-primary {
+    background: var(--color-primary);
+    color: var(--color-primary-text);
+    border-color: $black;
+    box-shadow: $shadow-md;
+
+    &:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    &:active {
+      transform: translate(2px, 2px) !important;
+    }
+  }
+
+  // Outline (Ghost key)
+  &.btn-outline {
+    background: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+
+    &:hover:not(:disabled) {
+      background: var(--color-surface-alt);
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  // Accent (Cyan key)
+  &.btn-accent {
+    background: var(--color-accent);
+    color: var(--color-accent-text);
+    border-color: $black;
+    box-shadow: $shadow-md;
+
+    &:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  // Secondary (Blue key)
+  &.btn-secondary {
+    background: var(--color-secondary);
+    color: var(--color-secondary-text);
+    border-color: $black;
+    box-shadow: $shadow-md;
+
+    &:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  // Danger (Red key)
+  &.btn-danger {
+    background: var(--color-danger);
+    color: $white;
+    border-color: $black;
+    box-shadow: $shadow-md;
+
+    &:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  // Success (Green key)
+  &.btn-success {
+    background: var(--color-success);
+    color: $black;
+    border-color: $black;
+    box-shadow: $shadow-md;
+
+    &:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  // Inverse (Black/White swap)
+  &.btn-inverse {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+    box-shadow: var(--shadow-md);
+
+    &:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  // --- Disabled ---
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    border-bottom-width: $border-width;
+    border-right-width: $border-width;
+  }
+
+  // --- Loading state ---
+  &.btn-loading {
+    cursor: wait;
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: $space-sm;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+}
+
+// --- Button groups ---
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+// --- Back Button ---
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-xs $space-md;
+  font-family: $font-display;
+  font-weight: $fw-bold;
+  font-size: $text-sm;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  background: none;
+  border: 2px solid var(--color-border);
+  border-bottom-width: 3px;
+  border-right-width: 3px;
+  cursor: pointer;
+  transition: color $transition-fast, transform $transition-fast, box-shadow $transition-fast;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-text);
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 var(--color-border);
+  }
+}

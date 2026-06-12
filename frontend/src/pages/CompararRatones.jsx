@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 import '../styles/Compare.scss';
 
 const getProductIcon = (tipo) => {
   switch (tipo) {
-    case 'RATON': return '🖱️';
-    case 'TECLADO': return '⌨️';
-    case 'AURICULAR': return '🎧';
-    case 'MONITOR': return '🖥️';
-    case 'ALFOMBRA': return '🟥';
-    default: return '📦';
+    case 'RATON': return 'RATÓN';
+    case 'TECLADO': return 'TECL';
+    case 'AURICULAR': return 'AUR';
+    case 'MONITOR': return 'MON';
+    case 'ALFOMBRA': return 'ALF';
+    default: return tipo || '---';
   }
 };
 
@@ -63,6 +63,7 @@ const comparisonFields = [
 
 export const CompararRatones = () => {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [miceList, setMiceList] = useState([]);
   const [selectedMouseId, setSelectedMouseId] = useState('');
   const [selectedMice, setSelectedMice] = useState([]);
@@ -256,9 +257,13 @@ export const CompararRatones = () => {
           <h1>Comparador de Ratones</h1>
           <p>Agrega ratones de la base de datos y compara sus especificaciones técnicas de forma visual.</p>
         </div>
-        <Link to="/productos" className="btn btn-outline">
-          Volver al catálogo
-        </Link>
+        <button className="btn-back" onClick={() => navigate(-1)} aria-label="Volver atrás">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Volver
+        </button>
       </header>
 
       <section className="compare-actions-card">
@@ -326,7 +331,7 @@ export const CompararRatones = () => {
           {inventorySummary ? (
             <div className="inventory-summary-content">
               <div className="inventory-summary-title">
-                <span className="icon">🖱️</span>
+                <span className="icon" style={{ fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.05em' }}>RATÓN</span>
                 <div>
                   <strong>{inventorySummary.marca} {inventorySummary.modelo}</strong>
                   <p>{inventorySummary.tipo}</p>
