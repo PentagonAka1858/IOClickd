@@ -33,9 +33,15 @@ export const Home = () => {
               </h1>
               <p className="hero-desc">Gestiona tu inventario, revisa tu colección o descubre productos nuevos.</p>
               <div className="quick-links">
-                <Link to="/productos" className="btn btn-primary btn-lg">Ver Productos</Link>
-                <Link to="/inventario" className="btn btn-outline btn-lg">Mi Inventario</Link>
-                <Link to="/listas" className="btn btn-outline btn-lg">Mis Listas</Link>
+                {user?.rol === 'ADMIN' ? (
+                  <Link to="/admin" className="btn btn-primary btn-lg">Panel Admin</Link>
+                ) : (
+                  <>
+                    <Link to="/productos" className="btn btn-primary btn-lg">Ver Productos</Link>
+                    <Link to="/inventario" className="btn btn-outline btn-lg">Mi Inventario</Link>
+                    <Link to="/listas" className="btn btn-outline btn-lg">Mis Listas</Link>
+                  </>
+                )}
               </div>
             </>
           ) : (

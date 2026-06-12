@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
@@ -17,6 +17,21 @@ export const ConsultaDetail = () => {
   const [submitSuccess, setSubmitSuccess] = useState('');
   const [closeLoading, setCloseLoading] = useState(false);
   const [closeError, setCloseError] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+  const chatContainerRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [consulta?.mensajes]);
 
   const fetchConsulta = async () => {
     setLoading(true);
@@ -37,13 +52,22 @@ export const ConsultaDetail = () => {
     fetchConsulta();
   }, [id]);
 
+  const parseSafeDate = (value) => {
+    if (!value) return new Date(NaN);
+    if (typeof value !== 'string') return new Date(value);
+    // Replace space with T to ensure valid Date parsing
+    return new Date(value.replace(' ', 'T'));
+  };
+
   const formatFecha = (value) => {
-    if (!value) return 'Desconocida';
-    const parsed = new Date(value);
+    const parsed = parseSafeDate(value);
+    if (isNaN(parsed.getTime())) return 'Desconocida';
     return parsed.toLocaleDateString('es-ES', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -63,9 +87,18 @@ export const ConsultaDetail = () => {
         contenido: contenido.trim(),
       });
 
+      // Generate local time string like "YYYY-MM-DD HH:mm:ss" for the fallback
+      const now = new Date();
+      const localStr = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().replace('T', ' ').slice(0, 19);
+
+      const nuevoMensaje = {
+        ...response.data,
+        fecha_envio: response.data.fecha_envio || localStr
+      };
+
       setConsulta((prev) => ({
         ...prev,
-        mensajes: prev?.mensajes ? [...prev.mensajes, response.data] : [response.data],
+        mensajes: prev?.mensajes ? [...prev.mensajes, nuevoMensaje] : [nuevoMensaje],
       }));
       setContenido('');
       setSubmitSuccess('Mensaje enviado correctamente.');
@@ -98,11 +131,40 @@ export const ConsultaDetail = () => {
     }
   };
 
+  const handleReabrirConsulta = async () => {
+    if (!consulta || consulta.estado !== 'CERRADA') return;
+    setCloseError('');
+    setActionLoading(true);
+    try {
+      await api.post(`/consultas/${id}/reabrir`);
+      setConsulta((prev) => ({ ...prev, estado: 'ABIERTA' }));
+    } catch (err) {
+      console.error('Error al reabrir consulta:', err);
+      setCloseError(err.response?.data?.message || 'No se pudo reabrir la consulta.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteConsulta = async () => {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar esta consulta permanentemente?')) return;
+    setCloseError('');
+    setActionLoading(true);
+    try {
+      await api.delete(`/consultas/${id}`);
+      navigate(user?.rol === 'ADMIN' ? '/admin' : '/consultas');
+    } catch (err) {
+      console.error('Error al eliminar consulta:', err);
+      setCloseError(err.response?.data?.message || 'No se pudo eliminar la consulta.');
+      setActionLoading(false);
+    }
+  };
+
   const isSupportUser = ['ADMIN', 'MOD'].includes(user?.rol);
   const canReply = consulta?.estado !== 'CERRADA';
 
   return (
-    <div className="consulta-detail-page">
+    <div className="consultas-page consulta-detail-page">
       <button className="btn-back" onClick={() => navigate(-1)} aria-label="Volver atrás" style={{ marginBottom: '1.5rem' }}>
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
           <line x1="19" y1="12" x2="5" y2="12" />
@@ -133,8 +195,18 @@ export const ConsultaDetail = () => {
                 {consulta.estado}
               </span>
               {canReply && (
-                <button className="btn btn-sm btn-outline" onClick={handleCloseConsulta} disabled={closeLoading}>
+                <button className="btn btn-outline" onClick={handleCloseConsulta} disabled={closeLoading || actionLoading}>
                   {closeLoading ? 'Cerrando…' : 'Cerrar consulta'}
+                </button>
+              )}
+              {consulta.estado === 'CERRADA' && (
+                <button className="btn btn-outline" onClick={handleReabrirConsulta} disabled={actionLoading}>
+                  Reabrir consulta
+                </button>
+              )}
+              {user?.rol === 'ADMIN' && (
+                <button className="btn btn-danger" onClick={handleDeleteConsulta} disabled={actionLoading}>
+                  Eliminar
                 </button>
               )}
             </div>
@@ -143,22 +215,27 @@ export const ConsultaDetail = () => {
           {closeError && <div className="alert alert-danger mb-md">{closeError}</div>}
 
           {/* Messages */}
-          <section style={{ marginBottom: '2rem' }}>
-            <h2 style={{ marginBottom: '1rem', fontWeight: 900 }}>Mensajes</h2>
+          <section className="mensajes-section">
+            <h2>Mensajes</h2>
             {consulta.mensajes?.length > 0 ? (
-              <div className="messages">
+              <div className="messages-chat" ref={chatContainerRef}>
                 {consulta.mensajes
                   .slice()
-                  .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                  .sort((a, b) => {
+                    const dateA = parseSafeDate(a.fecha_envio || a.created_at);
+                    const dateB = parseSafeDate(b.fecha_envio || b.created_at);
+                    return (dateA.getTime() || 0) - (dateB.getTime() || 0);
+                  })
                   .map((mensaje) => {
+                    const isMe = mensaje.emisor?.id === user?.id;
                     const isClient = mensaje.emisor?.id === consulta.cliente_id;
                     return (
-                      <article key={mensaje.id} className={`message-bubble ${isClient ? 'from-me' : 'from-support'}`}>
+                      <article key={mensaje.id} className={`message-bubble ${isMe ? 'from-me' : 'from-support'}`}>
                         <p className="message-author">
                           {mensaje.emisor?.nombre || 'Usuario'} — {isClient ? 'Cliente' : 'Soporte'}
                         </p>
                         <p className="message-text">{mensaje.contenido}</p>
-                        <p className="message-time">{formatFecha(mensaje.created_at)}</p>
+                        <p className="message-time">{formatFecha(mensaje.fecha_envio || mensaje.created_at)}</p>
                       </article>
                     );
                   })}
@@ -175,8 +252,8 @@ export const ConsultaDetail = () => {
           {consulta.estado === 'CERRADA' ? (
             <div className="alert alert-info">Esta consulta está cerrada.</div>
           ) : (
-            <div className="reply-form">
-              <h2 style={{ marginBottom: '0.75rem', fontSize: '1.25rem', fontWeight: 900 }}>Enviar respuesta</h2>
+            <div className="reply-section">
+              <h2>Enviar respuesta</h2>
               {submitError && <div className="alert alert-danger mb-md">{submitError}</div>}
               {submitSuccess && <div className="alert alert-success mb-md">{submitSuccess}</div>}
               <form onSubmit={handleSendMessage} style={{ display: 'grid', gap: '0.75rem' }}>
