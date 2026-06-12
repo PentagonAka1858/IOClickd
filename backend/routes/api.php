@@ -75,7 +75,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/consultas/{consulta}',             [ConsultaController::class, 'show']);
     Route::post('/consultas/{consulta}/mensajes',   [ConsultaController::class, 'addMensaje']);
     Route::post('/consultas/{consulta}/cerrar',     [ConsultaController::class, 'cerrar']);
+    Route::post('/consultas/{consulta}/reabrir',    [ConsultaController::class, 'reabrir']);
     Route::post('/consultas/{consulta}/asignar',    [ConsultaController::class, 'asignar']);
+    Route::delete('/consultas/{consulta}',          [ConsultaController::class, 'destroy']);
 
     // Mensajes
     Route::get('/consultas/{consulta}/mensajes',                        [MensajeController::class, 'index']);

@@ -17,6 +17,7 @@ class AdminController extends Controller
             'total_usuarios' => User::count(),
             'total_admins_mods' => User::whereIn('rol', ['ADMIN', 'MOD'])->count(),
             'total_productos' => Producto::count(),
+            'productos_por_tipo' => Producto::selectRaw('tipo, count(*) as total')->groupBy('tipo')->get(),
             'total_resenias' => Resenia::count(),
             'total_resenias_visibles' => Resenia::where('visible', true)->count(),
             'total_resenias_ocultas' => Resenia::where('visible', false)->count(),

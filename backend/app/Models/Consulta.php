@@ -35,4 +35,9 @@ class Consulta extends Model
     {
         return $this->hasMany(Mensaje::class, 'consulta_id');
     }
+
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 }

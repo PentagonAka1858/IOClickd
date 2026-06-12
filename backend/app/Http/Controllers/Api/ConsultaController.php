@@ -208,4 +208,57 @@ class ConsultaController extends Controller
 
         return response()->json($consulta);
     }
+
+    /**
+     * Reabrir una consulta
+     */
+    public function reabrir(Request $request, Consulta $consulta)
+    {
+        $user = $request->user();
+
+        if (
+            $user->id !== $consulta->cliente_id &&
+            !in_array($user->rol, ['ADMIN', 'MOD'])
+        ) {
+            return response()->json([
+                'message' => 'No tienes permiso para reabrir esta consulta'
+            ], 403);
+        }
+
+        if ($consulta->estado === 'ABIERTA') {
+            return response()->json([
+                'message' => 'Esta consulta ya está abierta'
+            ], 400);
+        }
+
+        $consulta->update([
+            'estado' => 'ABIERTA',
+            'fecha_cierre' => null,
+        ]);
+
+        return response()->json([
+            'message' => 'Consulta reabierta exitosamente',
+            'consulta' => $consulta,
+        ]);
+    }
+
+    /**
+     * Eliminar una consulta (Solo Admin)
+     */
+    public function destroy(Request $request, Consulta $consulta)
+    {
+        $user = $request->user();
+
+        if ($user->rol !== 'ADMIN') {
+            return response()->json([
+                'message' => 'Solo los administradores pueden eliminar consultas'
+            ], 403);
+        }
+
+        $consulta->delete();
+
+        return response()->json([
+            'message' => 'Consulta eliminada exitosamente'
+        ]);
+    }
 }
