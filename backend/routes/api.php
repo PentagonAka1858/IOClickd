@@ -33,6 +33,10 @@ Route::get('/productos/{productoId}/caracteristicas-reales', [CaracteristicasRea
 Route::get('/listas/{lista}', [ListaPersonalController::class, 'show']);
 Route::get('/productos/{productoId}/usuarios', [InventarioController::class, 'usuariosConProducto']);
 
+// Búsqueda de perfiles públicos (accesible sin autenticación)
+Route::get('/users/public', [SeguimientoController::class, 'publicProfiles']);
+Route::get('/users/{user}/profile', [SeguimientoController::class, 'publicProfile']);
+
 // Rutas autenticadas
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -90,6 +94,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{user}/followers',           [SeguimientoController::class, 'followers']);
     Route::get('/users/{user}/following',           [SeguimientoController::class, 'following']);
     Route::get('/me/following',                     [SeguimientoController::class, 'myFollowing']);
+    Route::get('/me/following/list',                [SeguimientoController::class, 'myFollowingList']);
+    Route::get('/me/followers',                     [SeguimientoController::class, 'myFollowers']);
     Route::post('/users/{user}/follow',             [SeguimientoController::class, 'follow']);
     Route::delete('/users/{user}/follow',           [SeguimientoController::class, 'unfollow']);
     
