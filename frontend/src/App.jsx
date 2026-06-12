@@ -15,6 +15,8 @@ import { Inventario } from './pages/Inventario';
 import { MisListas } from './pages/MisListas';
 import { ListaDetalle } from './pages/ListaDetalle';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { AdminProductEdit } from './pages/AdminProductEdit';
+import { AdminProductCreate } from './pages/AdminProductCreate';
 import { Perfil } from './pages/Perfil';
 import { CompararRatones } from './pages/CompararRatones';
 import { NotFound } from './pages/NotFound';
@@ -44,6 +46,8 @@ function App() {
             <Route path="/consultas" element={<ProtectedRoute><Consultas /></ProtectedRoute>} />
             <Route path="/consultas/:id" element={<ProtectedRoute><ConsultaDetail /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/productos/create" element={<ProtectedRoute><AdminProductCreate /></ProtectedRoute>} />
+            <Route path="/admin/productos/:id/edit" element={<ProtectedRoute><AdminProductEdit /></ProtectedRoute>} />
             <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
 
             {/* Búsqueda de perfiles públicos */}
