@@ -12,17 +12,10 @@ class CaracteristicasRealesController extends Controller
     /**
      * Obtener características reales de un producto
      */
-    public function index(Request $request)
+    public function index(Request $request, $productoId)
     {
-        $request->validate([
-            'producto_id' => 'nullable|exists:productos,id',
-        ]);
-
-        $query = CaracteristicaReal::with(['user', 'producto']);
-
-        if ($request->has('producto_id')) {
-            $query->where('producto_id', $request->producto_id);
-        }
+        $query = CaracteristicaReal::with(['user', 'producto'])
+            ->where('producto_id', $productoId);
 
         $caracteristicas = $query
             ->orderByDesc('fecha')

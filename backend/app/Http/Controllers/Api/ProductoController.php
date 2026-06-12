@@ -12,7 +12,7 @@ class ProductoController extends Controller
     // Listar todos los productos (público)
     public function index(Request $request)
     {
-        $query = Producto::query();
+        $query = Producto::with('caracteristicaDetallada');
 
         // Filtro por tipo
         if ($request->has('tipo')) {
@@ -20,7 +20,7 @@ class ProductoController extends Controller
         }
 
         // Filtro por marca
-        if ($request->has('marca')) {
+        if ($request->has('marca') && $request->marca !== '') {
             $query->where('marca', 'like', '%' . $request->marca . '%');
         }
 
@@ -29,7 +29,48 @@ class ProductoController extends Controller
             $query->where('modelo', 'like', '%' . $request->buscar . '%');
         }
 
-        $productos = $query->orderBy('created_at', 'desc')->paginate(20);
+        // Filtro por peso máximo
+        if ($request->has('peso') && is_numeric($request->peso)) {
+            $pesoMax = (float) $request->peso;
+            $query->whereHas('caracteristicaDetallada', function($q) use ($pesoMax) {
+                $q->whereRaw('(CASE 
+                    WHEN LOWER(peso) LIKE "%kg%" THEN CAST(REPLACE(LOWER(peso), "kg", "") AS DECIMAL(10,2)) * 1000 
+                    ELSE CAST(REPLACE(LOWER(peso), "g", "") AS DECIMAL(10,2)) 
+                END) <= ?', [$pesoMax]);
+            });
+        }
+
+        // Filtro por conexión
+        if ($request->has('conexion') && $request->conexion !== '') {
+            $conexion = $request->conexion;
+            if ($conexion === 'inalambrica') {
+                $query->whereHas('caracteristicaDetallada', function($q) {
+                    $q->where('conexion', 'like', '%inalambric%')
+                      ->orWhere('conexion', 'like', '%wireless%')
+                      ->orWhere('conexion', 'like', '%bluetooth%')
+                      ->orWhere('conexion', 'like', '%2.4%');
+                });
+            } else if ($conexion === 'cable') {
+                $query->whereHas('caracteristicaDetallada', function($q) {
+                    $q->where('conexion', 'not like', '%inalambric%')
+                      ->where('conexion', 'not like', '%wireless%')
+                      ->where('conexion', 'not like', '%bluetooth%')
+                      ->where('conexion', 'not like', '%2.4%');
+                });
+            }
+        }
+
+        // Filtro por color
+        if ($request->has('color') && $request->color !== '') {
+            $color = $request->color;
+            $query->whereHas('caracteristicaDetallada', function($q) use ($color) {
+                $q->where('color', 'like', '%' . $color . '%');
+            });
+        }
+
+        $perPage = $request->has('per_page') && is_numeric($request->per_page) ? (int) $request->per_page : 20;
+        
+        $productos = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         return response()->json($productos);
     }

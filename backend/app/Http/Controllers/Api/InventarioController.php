@@ -68,9 +68,31 @@ class InventarioController extends Controller
             'principal' => 'sometimes|boolean',
         ]);
 
-        $item->update($request->only(['cantidad', 'principal']));
+        if ($request->has('principal') && $request->principal == true) {
+            $tipoProducto = Producto::where('id', $productoId)->value('tipo');
+            if ($tipoProducto) {
+                $productosDelMismoTipo = Producto::where('tipo', $tipoProducto)->pluck('id');
+                InventarioPersonal::where('user_id', $request->user()->id)
+                    ->whereIn('producto_id', $productosDelMismoTipo)
+                    ->where('producto_id', '!=', $productoId)
+                    ->update(['principal' => false]);
+            } else {
+                InventarioPersonal::where('user_id', $request->user()->id)
+                    ->where('producto_id', '!=', $productoId)
+                    ->update(['principal' => false]);
+            }
+        }
 
-        return response()->json($item->load('producto'));
+        InventarioPersonal::where('user_id', $request->user()->id)
+            ->where('producto_id', $productoId)
+            ->update($request->only(['cantidad', 'principal']));
+
+        $item = InventarioPersonal::where('user_id', $request->user()->id)
+            ->where('producto_id', $productoId)
+            ->with('producto')
+            ->first();
+
+        return response()->json($item);
     }
 
     // Eliminar producto del inventario

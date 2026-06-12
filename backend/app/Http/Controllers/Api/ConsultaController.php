@@ -27,14 +27,14 @@ class ConsultaController extends Controller
             })
             ->with(['cliente', 'soporte', 'mensajes.emisor'])
             ->orderBy('estado')
-            ->orderByDesc('fecha_creacion')
+            ->orderByDesc('created_at')
             ->paginate(15);
         } else {
             // Usuario común: solo sus consultas como cliente
             $consultas = Consulta::where('cliente_id', $user->id)
                 ->with(['cliente', 'soporte', 'mensajes.emisor'])
                 ->orderBy('estado')
-                ->orderByDesc('fecha_creacion')
+                ->orderByDesc('created_at')
                 ->paginate(15);
         }
 
