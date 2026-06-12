@@ -1,12 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import '../styles/Compare.scss';
 
 const getProductIcon = (tipo) => {
   switch (tipo) {
-    case 'RATON': return 'RATÓN';
+    case 'RATON': return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="7"></rect>
+        <path d="M12 2v10"></path>
+        <path d="M5 10h14"></path>
+      </svg>
+    );
     case 'TECLADO': return 'TECL';
     case 'AURICULAR': return 'AUR';
     case 'MONITOR': return 'MON';
@@ -27,22 +32,30 @@ const parseExtraSpecs = (caracteristicas) => {
   return caracteristicas.especificaciones_json || {};
 };
 
+const getVal = (obj, keys) => {
+  if (!obj) return null;
+  const lowerKeys = keys.map(k => k.toLowerCase());
+  const foundKey = Object.keys(obj).find(k => lowerKeys.includes(k.toLowerCase()));
+  return foundKey ? obj[foundKey] : null;
+};
+
 const buildTechnicalData = (producto, caracteristicas) => {
   const extraSpecs = parseExtraSpecs(caracteristicas);
+  const allSpecs = { ...caracteristicas, ...extraSpecs };
 
   return {
     tipo: producto.tipo || 'Ratón',
     marca: producto.marca || 'Desconocida',
     modelo: producto.modelo || 'Sin modelo',
-    conexion: caracteristicas?.conexion || producto.conexion || 'No disponible',
-    sensor: caracteristicas?.sensor || extraSpecs.sensor || 'No disponible',
-    dpi: caracteristicas?.dpi || extraSpecs.dpi || producto.dpi || 'No disponible',
-    peso: caracteristicas?.peso || extraSpecs.peso || producto.peso || 'No disponible',
-    dimensiones: caracteristicas?.dimensiones || extraSpecs.dimensiones || producto.dimensiones || 'No disponible',
-    rgb: caracteristicas?.rgb ?? extraSpecs.rgb ?? producto.rgb ? 'Sí' : 'No',
-    switch: caracteristicas?.switch || extraSpecs.switch || producto.switch || 'No disponible',
-    polling: caracteristicas?.polling || extraSpecs.polling || producto.polling || 'No disponible',
-    material: caracteristicas?.material || extraSpecs.material || producto.material || 'No disponible',
+    conexion: getVal(allSpecs, ['conexion', 'conectividad', 'conexión']) || producto.conexion || 'No disponible',
+    sensor: getVal(allSpecs, ['sensor', 'modelo de sensor']) || 'No disponible',
+    dpi: getVal(allSpecs, ['dpi', 'resolucion', 'resolución', 'sensibilidad', 'sensibilidad máxima']) || producto.dpi || 'No disponible',
+    peso: getVal(allSpecs, ['peso', 'peso (g)']) || producto.peso || 'No disponible',
+    dimensiones: getVal(allSpecs, ['dimensiones', 'tamaño']) || producto.dimensiones || 'No disponible',
+    rgb: getVal(allSpecs, ['rgb', 'iluminacion', 'iluminación']) ?? producto.rgb ? 'Sí' : 'No',
+    switch: getVal(allSpecs, ['switch', 'interruptores', 'tipo de switch']) || producto.switch || 'No disponible',
+    polling: getVal(allSpecs, ['polling', 'polling rate', 'tasa de sondeo']) || producto.polling || 'No disponible',
+    material: getVal(allSpecs, ['material', 'materiales']) || producto.material || 'No disponible',
     serializedExtras: extraSpecs,
   };
 };
@@ -62,33 +75,35 @@ const comparisonFields = [
 ];
 
 export const CompararRatones = () => {
-  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [miceList, setMiceList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedMouseId, setSelectedMouseId] = useState('');
   const [selectedMice, setSelectedMice] = useState([]);
   const [mouseDetails, setMouseDetails] = useState({});
-  const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
-  const inventoryMouse = useMemo(() => {
-    const ratones = inventory.filter((item) => item.producto?.tipo === 'RATON');
-    if (ratones.length === 0) return null;
-    return ratones.find((item) => item.principal) ?? ratones[0];
-  }, [inventory]);
 
   const selectedDetailRows = useMemo(() => {
     return selectedMice
       .map((id) => {
         const detail = mouseDetails[id];
         if (!detail) return null;
-        return buildTechnicalData(detail.producto, detail.caracteristicas);
+        return {
+          id,
+          ...buildTechnicalData(detail.producto, detail.caracteristicas)
+        };
       })
       .filter(Boolean);
   }, [selectedMice, mouseDetails]);
+
+  const filteredMice = useMemo(() => {
+    if (!searchQuery.trim()) return miceList;
+    const lower = searchQuery.toLowerCase();
+    return miceList.filter(m => `${m.marca} ${m.modelo}`.toLowerCase().includes(lower));
+  }, [miceList, searchQuery]);
 
   const fetchMice = async () => {
     try {
@@ -98,22 +113,6 @@ export const CompararRatones = () => {
     } catch (fetchError) {
       console.error('Error al cargar ratones:', fetchError);
       setError('No se pudo cargar la lista de ratones en este momento.');
-    }
-  };
-
-  const fetchInventory = async () => {
-    if (!isAuthenticated) {
-      setInventory([]);
-      return;
-    }
-
-    try {
-      const response = await api.get('/inventario');
-      const data = response.data?.data ?? response.data;
-      setInventory(Array.isArray(data) ? data : []);
-    } catch (fetchError) {
-      console.error('Error al cargar inventario:', fetchError);
-      setInventory([]);
     }
   };
 
@@ -140,7 +139,7 @@ export const CompararRatones = () => {
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      await Promise.all([fetchMice(), fetchInventory()]);
+      await fetchMice();
       setLoading(false);
     };
 
@@ -171,20 +170,7 @@ export const CompararRatones = () => {
     loadDetails();
   }, [selectedMice, mouseDetails]);
 
-  useEffect(() => {
-    if (!inventoryMouse) return;
-    if (mouseDetails[inventoryMouse.producto_id]) return;
 
-    const loadInventoryMouseDetail = async () => {
-      try {
-        const detail = await fetchMouseDetailsById(inventoryMouse.producto_id);
-        setMouseDetails((prev) => ({ ...prev, [inventoryMouse.producto_id]: detail }));
-      } catch (err) {
-        console.error('Error cargando detalle del ratón de inventario:', err);
-      }
-    };
-    loadInventoryMouseDetail();
-  }, [inventoryMouse, mouseDetails]);
 
   const handleAddMouse = () => {
     if (!selectedMouseId) {
@@ -243,42 +229,46 @@ export const CompararRatones = () => {
     );
   };
 
-  const inventorySummary = inventoryMouse && mouseDetails[inventoryMouse.producto_id]
-    ? buildTechnicalData(
-        mouseDetails[inventoryMouse.producto_id].producto,
-        mouseDetails[inventoryMouse.producto_id].caracteristicas
-      )
-    : null;
-
   return (
-    <div className="comparar-ratones-page">
-      <header className="page-header">
+    <div className="consultas-page comparar-ratones-page">
+      <button className="btn-back" onClick={() => navigate(-1)} aria-label="Volver atrás" style={{ marginBottom: '1.5rem' }}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Volver
+      </button>
+
+      <header className="page-header header-row" style={{ marginBottom: '2rem' }}>
         <div>
           <h1>Comparador de Ratones</h1>
-          <p>Agrega ratones de la base de datos y compara sus especificaciones técnicas de forma visual.</p>
+          <p className="page-subtitle">Agrega ratones de la base de datos y compara sus especificaciones técnicas de forma visual.</p>
         </div>
-        <button className="btn-back" onClick={() => navigate(-1)} aria-label="Volver atrás">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-          Volver
-        </button>
       </header>
 
       <section className="compare-actions-card">
-        <div className="compare-add-panel">
-          <button className="btn btn-primary plus-button" onClick={handleAddMouse}>
+        <div className="compare-add-panel" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button className="btn btn-primary" onClick={handleAddMouse}>
             + Añadir ratón
           </button>
+
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Buscar ratón..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }}
+          />
 
           <select
             value={selectedMouseId}
             onChange={(e) => setSelectedMouseId(e.target.value)}
             className="mouse-selector"
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', flex: 1, minWidth: '250px' }}
           >
             <option value="">Selecciona un ratón de la base de datos</option>
-            {miceList.map((mouse) => (
+            {filteredMice.map((mouse) => (
               <option key={mouse.id} value={mouse.id}>
                 {mouse.marca} {mouse.modelo}
               </option>
@@ -286,18 +276,15 @@ export const CompararRatones = () => {
           </select>
         </div>
 
-        <div className="compare-info-panel">
+        <div className="compare-info-panel" style={{ marginTop: '1rem' }}>
           <p>Selecciona hasta 3 ratones para comparar su rendimiento, sensor, conectividad y datos extendidos.</p>
-          <p className="hint">
-            Si tienes un ratón guardado en tu inventario, aparecerá como referencia en el resumen de tu ratón real.
-          </p>
         </div>
       </section>
 
       {message && <div className="alert alert-info">{message}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <section className="comparison-grid">
+      <section className="comparison-grid" style={{ gridTemplateColumns: '1fr' }}>
         <div className="comparison-table-card">
           <h2>Comparativa técnica</h2>
           <div className="table-wrapper">
@@ -306,7 +293,20 @@ export const CompararRatones = () => {
                 <tr>
                   <th>Características</th>
                   {selectedDetailRows.length > 0 ? selectedDetailRows.map((row, index) => (
-                    <th key={index}>{`${row.marca} ${row.modelo}`}</th>
+                    <th key={index} style={{ position: 'relative', paddingRight: '2.5rem' }}>
+                      {`${row.marca} ${row.modelo}`}
+                      <button
+                        onClick={() => handleRemoveMouse(row.id)}
+                        className="btn btn-danger"
+                        style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', padding: '0.25rem', display: 'flex', alignItems: 'center' }}
+                        title="Eliminar"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6"></polyline>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
+                    </th>
                   )) : (
                     <th colSpan={1}>Añade un ratón para comparar</th>
                   )}
@@ -325,52 +325,9 @@ export const CompararRatones = () => {
             </table>
           </div>
         </div>
-
-        <aside className="inventory-summary-card">
-          <h2>Tu ratón real</h2>
-          {inventorySummary ? (
-            <div className="inventory-summary-content">
-              <div className="inventory-summary-title">
-                <span className="icon" style={{ fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.05em' }}>RATÓN</span>
-                <div>
-                  <strong>{inventorySummary.marca} {inventorySummary.modelo}</strong>
-                  <p>{inventorySummary.tipo}</p>
-                </div>
-              </div>
-              <div className="inventory-summary-list">
-                <div>
-                  <span>Conexión</span>
-                  <strong>{inventorySummary.conexion}</strong>
-                </div>
-                <div>
-                  <span>Sensor</span>
-                  <strong>{inventorySummary.sensor}</strong>
-                </div>
-                <div>
-                  <span>DPI</span>
-                  <strong>{inventorySummary.dpi}</strong>
-                </div>
-                <div>
-                  <span>Peso</span>
-                  <strong>{inventorySummary.peso}</strong>
-                </div>
-              </div>
-              <p className="inventory-summary-note">
-                Este resumen se basa en el ratón tipo "RATON" que tienes guardado en tu inventario.
-              </p>
-            </div>
-          ) : (
-            <div className="empty-inventory-note">
-              <p>No hay ratones en tu inventario para usar como referencia.</p>
-              <Link to="/inventario" className="btn btn-primary">
-                Añadir mi ratón
-              </Link>
-            </div>
-          )}
-        </aside>
       </section>
 
-      <section className="mouse-cards-grid">
+      <section className="mouse-cards-grid" style={{ marginTop: '2rem' }}>
         {loading ? (
           <div className="loading-empty">Cargando ratones...</div>
         ) : selectedMice.length === 0 ? (
@@ -387,6 +344,7 @@ export const CompararRatones = () => {
             }
 
             const extraSpecs = parseExtraSpecs(detail.caracteristicas);
+            const techData = buildTechnicalData(detail.producto, detail.caracteristicas);
             return (
               <article key={mouseId} className="mouse-card">
                 <div className="mouse-card-header">
@@ -395,7 +353,7 @@ export const CompararRatones = () => {
                     <h3>{detail.producto.marca} {detail.producto.modelo}</h3>
                     <p>{detail.producto.tipo}</p>
                   </div>
-                  <button className="btn btn-outline remove-button" onClick={() => handleRemoveMouse(mouseId)}>
+                  <button className="btn btn-danger" onClick={() => handleRemoveMouse(mouseId)}>
                     Eliminar
                   </button>
                 </div>
@@ -405,19 +363,19 @@ export const CompararRatones = () => {
                 <div className="mouse-card-specs">
                   <div>
                     <span>Conexión</span>
-                    <strong>{detail.caracteristicas?.conexion || '—'}</strong>
+                    <strong>{techData.conexion !== 'No disponible' ? techData.conexion : '—'}</strong>
                   </div>
                   <div>
                     <span>Sensor</span>
-                    <strong>{detail.caracteristicas?.sensor || '—'}</strong>
+                    <strong>{techData.sensor !== 'No disponible' ? techData.sensor : '—'}</strong>
                   </div>
                   <div>
                     <span>DPI</span>
-                    <strong>{detail.caracteristicas?.dpi || '—'}</strong>
+                    <strong>{techData.dpi !== 'No disponible' ? techData.dpi : '—'}</strong>
                   </div>
                   <div>
                     <span>Peso</span>
-                    <strong>{detail.caracteristicas?.peso || '—'}</strong>
+                    <strong>{techData.peso !== 'No disponible' ? techData.peso : '—'}</strong>
                   </div>
                 </div>
 
@@ -440,7 +398,7 @@ export const CompararRatones = () => {
                             <span>{field.replace(/_/g, ' ')}</span>
                             <strong>{value ?? '—'}</strong>
                           </div>
-                      ))}
+                        ))}
                     </div>
                   )}
                 </div>
